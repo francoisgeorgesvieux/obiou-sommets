@@ -45,6 +45,17 @@ Projet `obiou-sommets` (`0081f1e1-c1bc-4fb5-9f4f-8b599e56aba4`), offre Hobby.
 | `backup` (`7c632da2…`) | racine `/infra/backup`, cron `0 3 * * *`, redémarrage `NEVER` |
 | buckets | `obiou-sommets-files` (uploads Directus) et `obiou-sommets-backups`, région `ams` |
 
+Staging (`2ee34906-8acc-4538-a3f8-8789f4a1d7ef`) : copie de la production, branche `staging`, `web` et
+`cms` en veille quand inactifs, **pas de service `backup`**. Domaines :
+`web-staging-6028.up.railway.app`, `cms-staging-5f20.up.railway.app`.
+⚠️ La copie d'environnement a repris la même valeur de `POSTGRES_PASSWORD` que la production (bases
+distinctes, aucune exposée publiquement). Changer ce mot de passe demande un `ALTER USER` dans la
+base, pas seulement la variable : le volume est déjà initialisé.
+
+**La source de vérité de la config est `.railway/railway.ts`.** Toujours `railway environment <env>`
+puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre dit
+« already up to date » sur les deux environnements.
+
 - **Régions** : chaque service doit être en `europe-west4-drams3a` et seulement là. La région par
   défaut du workspace est `sfo` : tout nouveau service y atterrit. **L'offre Hobby refuse plusieurs
   régions** et le déploiement échoue en moins d'une seconde, sans aucun log. Correctif mesuré :

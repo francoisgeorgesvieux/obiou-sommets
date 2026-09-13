@@ -59,6 +59,11 @@ téléchargement et l'import GPX admin. Décisions D1 à D8 écrites. Liste des 
 
 ## Phase 1 — Fondations · 5 → 18 oct. 2026
 
+> **Avancement au 13 sept. 2026** : monorepo, CI verte, dépôt public, projet Railway (production et
+> staging) en EU West, site Nuxt en ligne avec contrôle de la base, image Directus et sauvegarde
+> testées. **Reste côté propriétaire** : poser les secrets Directus (`SECRET`, compte admin, clé
+> Resend, licence), puis vérifier la première connexion à l'admin. Détails dans `CLAUDE.md`.
+
 **Objectif** : un `git push` déploie tout seul en staging, et une sauvegarde est restaurable.
 
 - Monorepo pnpm (`apps/web`, `apps/cms`, `packages/geo`, `packages/domain`, `db/views`), lint,
