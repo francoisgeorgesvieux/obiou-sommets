@@ -1,0 +1,17 @@
+node_modules/
+.nuxt/
+.output/
+dist/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+coverage/
+
+# Canvas de maquettes assemblé (régénérable depuis design/*.dc.html)
+design/maquettes-*.html
+.data/
+*.tsbuildinfo
+.eslintcache
+.claude/settings.local.json

@@ -1,0 +1,40 @@
+# Local development: Postgres + PostGIS and Directus.
+#   cp .env.example .env    (then fill in the local values)
+#   docker compose up -d
+#   corepack pnpm dev        (Nuxt on http://localhost:3000)
+services:
+  postgres:
+    image: postgis/postgis:17-3.5-alpine
+    environment:
+      POSTGRES_USER: obiou
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD:?set LOCAL_DB_PASSWORD in .env}
+      POSTGRES_DB: obiou_sommets
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U obiou -d obiou_sommets"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  cms:
+    build: ./apps/cms
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8055:8055"
+    environment:
+      SECRET: ${LOCAL_DIRECTUS_SECRET:?set LOCAL_DIRECTUS_SECRET in .env}
+      PUBLIC_URL: http://localhost:8055
+      DB_CLIENT: pg
+      DB_CONNECTION_STRING: postgres://obiou:${LOCAL_DB_PASSWORD}@postgres:5432/obiou_sommets
+      ADMIN_EMAIL: ${LOCAL_ADMIN_EMAIL:?set LOCAL_ADMIN_EMAIL in .env}
+      ADMIN_PASSWORD: ${LOCAL_ADMIN_PASSWORD:?set LOCAL_ADMIN_PASSWORD in .env}
+      TELEMETRY: "false"
+      WEBSOCKETS_ENABLED: "true"
+
+volumes:
+  pgdata:

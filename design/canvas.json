@@ -1,0 +1,465 @@
+{
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Parcours visiteur"
+    },
+    {
+      "id": "page-4",
+      "name": "Autres pages publiques"
+    },
+    {
+      "id": "page-3",
+      "name": "Admin"
+    },
+    {
+      "id": "page-2",
+      "name": "Design system"
+    }
+  ],
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "title": "Carte · desktop",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-1"
+    },
+    {
+      "file": "CarteMobile.dc.html",
+      "title": "Carte · mobile",
+      "x": 1540,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "page-1"
+    },
+    {
+      "file": "ApercuSommetMobile.dc.html",
+      "title": "Aperçu sommet · mobile (Corée)",
+      "x": 2010,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "page-1"
+    },
+    {
+      "file": "FicheSommet.dc.html",
+      "title": "Fiche sommet · desktop",
+      "x": 0,
+      "y": 1040,
+      "w": 1440,
+      "h": 2680,
+      "page": "page-1"
+    },
+    {
+      "file": "FicheSommetMobile.dc.html",
+      "title": "Fiche sommet · mobile",
+      "x": 1540,
+      "y": 1040,
+      "w": 390,
+      "h": 2170,
+      "page": "page-1"
+    },
+    {
+      "file": "FicheItineraire.dc.html",
+      "title": "Fiche itinéraire · desktop",
+      "x": 0,
+      "y": 3860,
+      "w": 1440,
+      "h": 2700,
+      "page": "page-1"
+    },
+    {
+      "file": "FicheItineraireMobile.dc.html",
+      "title": "Fiche itinéraire · mobile",
+      "x": 1540,
+      "y": 3860,
+      "w": 390,
+      "h": 844,
+      "page": "page-1"
+    },
+    {
+      "file": "FicheItineraireMobileSuite.dc.html",
+      "title": "Fiche itinéraire · mobile (suite)",
+      "x": 2010,
+      "y": 3860,
+      "w": 390,
+      "h": 2140,
+      "page": "page-1"
+    },
+    {
+      "file": "Telechargement.dc.html",
+      "title": "Téléchargement · desktop",
+      "x": 0,
+      "y": 6700,
+      "w": 1440,
+      "h": 900,
+      "page": "page-1"
+    },
+    {
+      "file": "TelechargementMobile.dc.html",
+      "title": "Téléchargement · mobile",
+      "x": 1540,
+      "y": 6700,
+      "w": 390,
+      "h": 844,
+      "page": "page-1"
+    },
+    {
+      "file": "Sommets.dc.html",
+      "title": "Liste des sommets · desktop",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1390,
+      "page": "page-4"
+    },
+    {
+      "file": "SommetsMobile.dc.html",
+      "title": "Liste des sommets · mobile",
+      "x": 1540,
+      "y": 0,
+      "w": 390,
+      "h": 844,
+      "page": "page-4"
+    },
+    {
+      "file": "RegionCoree.dc.html",
+      "title": "Page pays · desktop",
+      "x": 0,
+      "y": 1550,
+      "w": 1440,
+      "h": 1980,
+      "page": "page-4"
+    },
+    {
+      "file": "RegionCoreeMobile.dc.html",
+      "title": "Page pays · mobile",
+      "x": 1540,
+      "y": 1550,
+      "w": 390,
+      "h": 1830,
+      "page": "page-4"
+    },
+    {
+      "file": "Recherche.dc.html",
+      "title": "Recherche · résultats",
+      "x": 0,
+      "y": 3690,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "RechercheMobile.dc.html",
+      "title": "Recherche · mobile, aucun résultat",
+      "x": 1540,
+      "y": 3690,
+      "w": 390,
+      "h": 844,
+      "page": "page-4"
+    },
+    {
+      "file": "Favoris.dc.html",
+      "title": "Favoris · desktop",
+      "x": 0,
+      "y": 4750,
+      "w": 1440,
+      "h": 1080,
+      "page": "page-4"
+    },
+    {
+      "file": "FavorisMobile.dc.html",
+      "title": "Favoris · mobile, vide",
+      "x": 1540,
+      "y": 4750,
+      "w": 390,
+      "h": 844,
+      "page": "page-4"
+    },
+    {
+      "file": "AssistantIA.dc.html",
+      "title": "Assistant IA (MCP) · desktop",
+      "x": 0,
+      "y": 5990,
+      "w": 1440,
+      "h": 1640,
+      "page": "page-4"
+    },
+    {
+      "file": "AssistantIAMobile.dc.html",
+      "title": "Assistant IA (MCP) · mobile",
+      "x": 1540,
+      "y": 5990,
+      "w": 390,
+      "h": 1740,
+      "page": "page-4"
+    },
+    {
+      "file": "GuideImport.dc.html",
+      "title": "Guide : importer une trace · desktop",
+      "x": 0,
+      "y": 7890,
+      "w": 1440,
+      "h": 1970,
+      "page": "page-4"
+    },
+    {
+      "file": "GuideImportMobile.dc.html",
+      "title": "Guide : importer une trace · mobile",
+      "x": 1540,
+      "y": 7890,
+      "w": 390,
+      "h": 1420,
+      "page": "page-4"
+    },
+    {
+      "file": "GuideCotations.dc.html",
+      "title": "Guide : cotations T1 à T6",
+      "x": 0,
+      "y": 10020,
+      "w": 1440,
+      "h": 1410,
+      "page": "page-4"
+    },
+    {
+      "file": "Signaler.dc.html",
+      "title": "Signaler une erreur · formulaire",
+      "x": 0,
+      "y": 11590,
+      "w": 1440,
+      "h": 1380,
+      "page": "page-4"
+    },
+    {
+      "file": "SignalerMobile.dc.html",
+      "title": "Signaler · confirmation mobile",
+      "x": 1540,
+      "y": 11590,
+      "w": 390,
+      "h": 844,
+      "page": "page-4"
+    },
+    {
+      "file": "APropos.dc.html",
+      "title": "À propos",
+      "x": 0,
+      "y": 13130,
+      "w": 1440,
+      "h": 1700,
+      "page": "page-4"
+    },
+    {
+      "file": "MentionsLegales.dc.html",
+      "title": "Mentions légales",
+      "x": 0,
+      "y": 14990,
+      "w": 1440,
+      "h": 1360,
+      "page": "page-4"
+    },
+    {
+      "file": "Erreur404.dc.html",
+      "title": "404",
+      "x": 0,
+      "y": 16510,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "HorsLigneMobile.dc.html",
+      "title": "Hors ligne · mobile",
+      "x": 1540,
+      "y": 16510,
+      "w": 390,
+      "h": 844,
+      "page": "page-4"
+    },
+    {
+      "file": "ChargementMobile.dc.html",
+      "title": "Chargement · mobile",
+      "x": 2010,
+      "y": 16510,
+      "w": 390,
+      "h": 844,
+      "page": "page-4"
+    },
+    {
+      "file": "AdminConnexion.dc.html",
+      "title": "Connexion",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminDoubleAuth.dc.html",
+      "title": "Double authentification",
+      "x": 1540,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminTableauDeBord.dc.html",
+      "title": "Tableau de bord",
+      "x": 0,
+      "y": 1060,
+      "w": 1440,
+      "h": 1000,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminImportGpx.dc.html",
+      "title": "Itinéraire · import GPX (étape Résultat)",
+      "x": 1540,
+      "y": 1060,
+      "w": 1440,
+      "h": 1060,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminSommets.dc.html",
+      "title": "Sommets · liste",
+      "x": 0,
+      "y": 2280,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminEditionSommet.dc.html",
+      "title": "Sommet · édition",
+      "x": 1540,
+      "y": 2280,
+      "w": 1440,
+      "h": 1820,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminItineraires.dc.html",
+      "title": "Itinéraires · liste",
+      "x": 0,
+      "y": 4260,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminPoi.dc.html",
+      "title": "Points de départ et POI",
+      "x": 1540,
+      "y": 4260,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminConseils.dc.html",
+      "title": "Conseils",
+      "x": 0,
+      "y": 5320,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminMediatheque.dc.html",
+      "title": "Médiathèque",
+      "x": 1540,
+      "y": 5320,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminSignalements.dc.html",
+      "title": "Signalements",
+      "x": 0,
+      "y": 6380,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminUtilisateurs.dc.html",
+      "title": "Utilisateurs et rôles",
+      "x": 1540,
+      "y": 6380,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminAccesIA.dc.html",
+      "title": "Accès IA (MCP)",
+      "x": 0,
+      "y": 7440,
+      "w": 1440,
+      "h": 920,
+      "page": "page-3"
+    },
+    {
+      "file": "AdminParametres.dc.html",
+      "title": "Paramètres du site",
+      "x": 1540,
+      "y": 7440,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "DesignSystem.dc.html",
+      "title": "Design system",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 3460,
+      "page": "page-2"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "donnees-exemple",
+      "x": 2480,
+      "y": 0,
+      "w": 340,
+      "page": "page-1",
+      "text": "Données d'exemple : itinéraires, horaires, accès, météo et récits de sortie sont fictifs ; altitudes indicatives.\nLes fonds de carte sont dessinés pour la maquette. En production : Plan IGN en France, OpenStreetMap ailleurs."
+    },
+    {
+      "id": "parcours",
+      "x": 2480,
+      "y": 260,
+      "w": 340,
+      "page": "page-1",
+      "text": "Parcours principal, de haut en bas :\n1. Carte et aperçu du sommet\n2. Fiche sommet\n3. Fiche itinéraire\n4. Téléchargement de la trace"
+    },
+    {
+      "id": "pages-note",
+      "x": 2480,
+      "y": 0,
+      "w": 360,
+      "page": "page-4",
+      "text": "Autres pages publiques.\nEntre crochets : à compléter par toi (présentation, mentions légales, ligne de bus).\nL'état hors ligne suppose la version installable du site, prévue après le lancement."
+    },
+    {
+      "id": "admin-note",
+      "x": 3080,
+      "y": 0,
+      "w": 360,
+      "page": "page-3",
+      "text": "Back-office construit sur Directus : ces écrans servent de référence pour le thème et les écrans sur-mesure.\nÀ retenir : l'assistant IA ne peut que créer des brouillons (voir Accès IA et Signalements)."
+    }
+  ],
+  "launch": {
+    "view": "canvas",
+    "page": "page-4"
+  }
+}

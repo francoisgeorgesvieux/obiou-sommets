@@ -1,0 +1,32 @@
+:root {
+  --calcaire: #f6f3ec;
+  --surface: #fffdf9;
+  --trait: #e3ddd1;
+  --ardoise: #1f2a2e;
+  --pierre: #56646a;
+  --alpage: #1f6f4f;
+  --alpage-clair: #e3ede6;
+  --alerte: #b3261e;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--calcaire);
+  color: var(--ardoise);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+#__nuxt {
+  height: 100%;
+}

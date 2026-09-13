@@ -1,0 +1,22 @@
+{
+  "name": "@obiou/geo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Calculs géographiques purs : distances, dénivelés, traces GPX.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.0"
+  }
+}
