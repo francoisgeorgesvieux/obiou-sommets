@@ -1,5 +1,8 @@
 packages:
   - apps/web
   - packages/*
+# pnpm 12 refuses unreviewed dependency install scripts.
 allowBuilds:
   esbuild: true
+  # Native binding already ships as an optional dependency; its postinstall is only a fallback.
+  unrs-resolver: false
