@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { AttributionControl, Map as MapLibreMap, NavigationControl } from 'maplibre-gl'
+import { AttributionControl, Map as MapLibreMap, NavigationControl, setWorkerUrl } from 'maplibre-gl'
+// MapLibre 6 computes its worker URL at runtime, so the bundler never emits the file.
+// `?worker&url` makes Vite bundle the worker with its shared chunk and hand back its URL.
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+setWorkerUrl(workerUrl)
 
 const props = withDefaults(defineProps<{
   center?: [number, number]
@@ -11,7 +16,7 @@ const props = withDefaults(defineProps<{
   zoom: 10.5,
 })
 
-const container = ref<HTMLDivElement | null>(null)
+const container = useTemplateRef<HTMLDivElement>('conteneur')
 let map: MapLibreMap | null = null
 
 onMounted(() => {
@@ -35,7 +40,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
-    ref="container"
+    ref="conteneur"
     class="carte"
     role="region"
     aria-label="Carte du massif du Dévoluy"

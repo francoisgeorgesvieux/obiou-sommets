@@ -32,6 +32,11 @@ export default defineNuxtConfig({
     '/api/**': { headers: { 'cache-control': 'no-store' } },
   },
 
+  vite: {
+    // Module workers (MapLibre): keep ES format so imports inside the worker survive bundling.
+    worker: { format: 'es' },
+  },
+
   eslint: {
     config: { stylistic: false },
   },

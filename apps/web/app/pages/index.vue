@@ -16,7 +16,9 @@ useSeoMeta({ robots: 'noindex, nofollow' })
 
 <template>
   <main class="page">
-    <CarteIgn />
+    <ClientOnly>
+      <CarteIgn />
+    </ClientOnly>
     <header class="panneau">
       <p class="surtitre">
         Phase 1 · fondations

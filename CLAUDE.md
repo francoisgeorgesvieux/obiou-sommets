@@ -31,7 +31,16 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
 - `pnpm check` = lint + typecheck + tests, comme la CI ; `pnpm build` construit le site
 - TypeScript est **épinglé en 6.x** : TS 7 casse `vue-tsc` et `typescript-eslint` (mesuré le 2026-09-13)
 - pnpm 12 bloque les scripts d'installation des dépendances : les autorisations sont dans
-  `allowBuilds` de `pnpm-workspace.yaml`
+  `allowBuilds` de `pnpm-workspace.yaml`. Une dépendance non décidée ne fait échouer l'install
+  **que sous Linux** (Railway, CI), pas en local sur macOS
+- **Carte MapLibre 6**, deux pièges mesurés le 2026-09-13, tous deux silencieux (aucune erreur
+  console, carte simplement vide) :
+  1. le worker est chargé par une URL calculée à l'exécution, donc jamais émis par Vite → 404.
+     Correctif : `import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'` puis
+     `setWorkerUrl(workerUrl)`, avec `vite.worker.format: 'es'` ;
+  2. dans un composant `*.client.vue`, la référence de template restait `null` au montage.
+     Utiliser un composant normal dans `<ClientOnly>` avec `useTemplateRef`.
+  Vérifier une carte dans un vrai navigateur : jsdom n'a pas WebGL, un test unitaire ne verra rien.
 
 ## Infrastructure Railway (créée le 2026-09-13)
 
