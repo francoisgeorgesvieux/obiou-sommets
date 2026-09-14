@@ -37,6 +37,17 @@ ask() {
   else
     read -rp "$label : " value
   fi
+  # A paste containing a line break would silently answer the NEXT prompt with its second line.
+  # Input still pending right after the read means that happened: discard it and stop.
+  if [ -t 0 ]; then
+    local extra leftover=""
+    while IFS= read -rs -t 1 extra; do leftover=1; done
+    if [ -n "$leftover" ]; then
+      echo "  ✗ $key : le collage contenait plusieurs lignes. Rien n'est enregistré pour cette variable ni les suivantes." >&2
+      echo "    Copie la valeur seule (sans retour à la ligne), puis relance le script." >&2
+      exit 1
+    fi
+  fi
   # Trim surrounding whitespace pasted by accident.
   value="${value#"${value%%[![:space:]]*}"}"
   value="${value%"${value##*[![:space:]]}"}"
