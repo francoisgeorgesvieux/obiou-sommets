@@ -62,7 +62,8 @@ téléchargement et l'import GPX admin. Décisions D1 à D8 écrites. Liste des 
 > **Avancement au 13 sept. 2026** : monorepo, CI verte, dépôt public, projet Railway (production et
 > staging) en EU West, site Nuxt en ligne avec contrôle de la base, image Directus et sauvegarde
 > testées. **Reste côté propriétaire** : poser les secrets Directus (`SECRET`, compte admin, clé
-> Resend, licence), puis vérifier la première connexion à l'admin. Détails dans `CLAUDE.md`.
+> licence), puis vérifier la première connexion à l'admin. Détails dans `CLAUDE.md`.
+> **14 sept.** : Directus en ligne en production, 2FA et licence actives. Pas d'e-mail (SMTP bloqué).
 
 **Objectif** : un `git push` déploie tout seul en staging, et une sauvegarde est restaurable.
 
@@ -75,7 +76,7 @@ téléchargement et l'import GPX admin. Décisions D1 à D8 écrites. Liste des 
   - bucket S3, région EU ;
   - service `cms` (Directus 12) et service `web` (Nuxt « hello carte ») branchés sur GitHub.
 - DNS Hostinger pour staging (ou domaines `*.up.railway.app` au début).
-- Resend branché sur Directus (invitation d'un éditeur de test).
+- ~~Resend branché sur Directus~~ : abandonné, Railway Hobby bloque le SMTP sortant (14 sept. 2026).
 - Service `backup` (reprendre le modèle d'obioucounting), plus un **test de restauration réel**.
 
 **Critère de sortie** : merge sur `staging` → build Railway → site et admin accessibles. Restauration

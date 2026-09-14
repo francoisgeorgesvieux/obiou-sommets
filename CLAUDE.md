@@ -1,6 +1,6 @@
 # obiou-sommets — contexte projet pour Claude
 
-> Document de passation vivant. Dernière mise à jour : **2026-09-13**.
+> Document de passation vivant. Dernière mise à jour : **2026-09-14**.
 
 ## Ce que c'est
 
@@ -13,7 +13,9 @@ Projet frère d'[obioucounting](../obioucounting) (même propriétaire, même do
 
 ## État
 
-**Cadrage et maquettes.** Rien n'est construit ni déployé.
+**Phase 1 (fondations), presque close.** Site Nuxt et Directus en ligne en production (admin créé,
+2FA active, licence Open Innovation Grant reconnue). Reste : secrets de staging, vérification d'une
+sauvegarde contenant les tables Directus, domaines personnalisés `sommets.obiou.eu`.
 
 - **Décidé par le propriétaire (2026-09-13)** : sous-domaine `sommets.obiou.eu` ; site personnel
   **non commercial, sans publicité** ; contenu = ses propres sorties, **Alpes + Corée du Sud**.
@@ -61,7 +63,9 @@ Staging (`2ee34906-8acc-4538-a3f8-8789f4a1d7ef`) : copie de la production, branc
 distinctes, aucune exposée publiquement). Changer ce mot de passe demande un `ALTER USER` dans la
 base, pas seulement la variable : le volume est déjà initialisé.
 
-**La source de vérité de la config est `.railway/railway.ts`.** Toujours `railway environment <env>`
+**La source de vérité de la config est `.railway/railway.ts`.** ⚠️ Toute variable absente du fichier est
+**supprimée** par `apply` : une variable posée dans le dashboard ou par script doit y être ajoutée en
+`preserve()` dans le même commit (mesuré le 2026-09-14 : le plan voulait supprimer `SECRET` et `LICENSE_KEY`). Toujours `railway environment <env>`
 puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre dit
 « already up to date » sur les deux environnements.
 
@@ -75,14 +79,16 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
 - **Watch patterns** : un commit hors du périmètre d'un service donne un déploiement `SKIPPED`, c'est
   normal.
 - **Secrets posés par le propriétaire uniquement** (jamais par Claude) : `cms` → `SECRET`,
-  `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `LICENSE_KEY`, `EMAIL_SMTP_PASSWORD` (clé Resend). Sans `SECRET`,
+  `ADMIN_EMAIL`, `ADMIN_PASSWORD` (premier démarrage seulement, puis supprimé), `LICENSE_KEY`. Sans `SECRET`,
   ou sur une base vide sans compte admin, le conteneur refuse de démarrer (voir
   `apps/cms/obiou/entrypoint.cjs`).
 - **Pas d'e-mail sortant par SMTP** : Railway bloque le SMTP sortant sur l'offre Hobby (réservé à Pro,
   [doc](https://docs.railway.com/networking/outbound-networking#email-delivery)). Mesuré le
   2026-09-14 : `Connection timeout` vers Resend, alors qu'une mauvaise clé aurait donné une erreur
   d'authentification. Directus ne gère que `smtp`, `sendmail`, `mailgun` et `ses` : Resend
-  (SMTP uniquement côté Directus) ne peut donc pas servir. Choix en cours avec le propriétaire.
+  (SMTP uniquement côté Directus) ne peut donc pas servir. **Décision du propriétaire (2026-09-14) : pas
+  d'e-mail.** Comptes créés à la main ; mot de passe perdu → réinitialisation par l'admin ou en CLI.
+  Variables `EMAIL_*` retirées. Si besoin plus tard : transport `mailgun` (API HTTPS, autorisée sur Hobby).
 - **Secrets** : les poser avec `infra/scripts/set-cms-secrets.sh <env>`, pas avec le formulaire du
   dashboard, qui a produit deux fois des variables vides (invisibles une fois scellées).
 - **Licence Directus** : sans clé, le niveau Core ignore les règles de permission personnalisées.

@@ -49,7 +49,10 @@ export default defineRailway((ctx) => {
     healthcheckTimeout: 300,
     replicas: EU_WEST,
     deploy: { restartPolicyMaxRetries: 5, ...idle },
-    env: { DB_CLIENT: preserve(), DB_CONNECTION_STRING: preserve(), EMAIL_FROM: preserve(), EMAIL_SMTP_HOST: preserve(), EMAIL_SMTP_PORT: preserve(), EMAIL_SMTP_SECURE: preserve(), EMAIL_SMTP_USER: preserve(), EMAIL_TRANSPORT: preserve(), IP_TRUST_PROXY: preserve(), PORT: preserve(), PUBLIC_URL: preserve(), RATE_LIMITER_ENABLED: preserve(), STORAGE_LOCATIONS: preserve(), STORAGE_S3_BUCKET: preserve(), STORAGE_S3_DRIVER: preserve(), STORAGE_S3_ENDPOINT: preserve(), STORAGE_S3_KEY: preserve(), STORAGE_S3_REGION: preserve(), STORAGE_S3_ROOT: preserve(), STORAGE_S3_SECRET: preserve(), TELEMETRY: preserve() },
+    // Secrets set by the owner with infra/scripts/set-cms-secrets.sh. They MUST stay listed:
+    // omitting a variable here makes `railway config apply` delete it.
+    // No EMAIL_* on purpose: Railway Hobby blocks outbound SMTP.
+    env: { SECRET: preserve(), ADMIN_EMAIL: preserve(), LICENSE_KEY: preserve(), DB_CLIENT: preserve(), DB_CONNECTION_STRING: preserve(), IP_TRUST_PROXY: preserve(), PORT: preserve(), PUBLIC_URL: preserve(), RATE_LIMITER_ENABLED: preserve(), STORAGE_LOCATIONS: preserve(), STORAGE_S3_BUCKET: preserve(), STORAGE_S3_DRIVER: preserve(), STORAGE_S3_ENDPOINT: preserve(), STORAGE_S3_KEY: preserve(), STORAGE_S3_REGION: preserve(), STORAGE_S3_ROOT: preserve(), STORAGE_S3_SECRET: preserve(), TELEMETRY: preserve() },
   });
 
   // Daily dump, restore check, age encryption, upload. Production only.

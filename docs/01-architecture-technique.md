@@ -41,7 +41,6 @@ flowchart LR
   S3[("Bucket S3<br/>GPX source · exports · photos")]
   IGN["IGN Géoplateforme<br/>tuiles · altimétrie"]
   WX["Open-Meteo<br/>prévisions"]
-  RS["Resend<br/>e-mails"]
 
   V -->|HTTPS| WEB
   AI -->|"MCP lecture seule, sans compte"| WEB
@@ -54,7 +53,6 @@ flowchart LR
   CMS --> S3
   CMS -->|"altitudes RGE ALTI"| IGN
   CMS -->|"webhook publication → purge cache"| WEB
-  CMS --> RS
   V -.->|tuiles cartographiques| IGN
   WEB --> WX
   BK --> PG
@@ -90,7 +88,7 @@ Ce découpage apporte trois choses :
 | MCP admin | **MCP intégré de Directus** | Gratuit, gouverné par les permissions Directus, journal d'audit, suppression désactivée par défaut. | MCP admin maison (réécrire les permissions) |
 | Traitement GPX | **Package TS pur `packages/geo`** | Testable sans framework, réutilisé par le hook Directus et par le MCP. | Traitement dans le navigateur (non fiable) |
 | Fichiers | **Bucket S3** (Railway Bucket / Tigris) | Déjà utilisé sur obioucounting. Données publiques, donc peu sensibles. | Volume disque (pas de CDN, sauvegardes complexes) |
-| E-mails | **Resend** (SMTP) | Domaine obiou.eu déjà vérifié (SPF/DKIM). | — |
+| E-mails | **Aucun** (décision du 14 sept. 2026) | Railway Hobby bloque le SMTP sortant et Directus n'a pas de transport Resend par API. Comptes créés à la main. | Mailgun par API (possible plus tard), Railway Pro |
 | Hébergement | **Railway**, projet dédié | Déjà en place, déploiement depuis GitHub, TLS automatique. | VPS (voir la décision d'hébergement d'obioucounting : pas avant les seuils) |
 | Météo | **Open-Meteo** | Gratuit, sans clé, modèles Météo-France inclus. ⚠️ Usage non commercial gratuit : à revoir si le site est monétisé. | API Météo-France (clé, quotas) |
 

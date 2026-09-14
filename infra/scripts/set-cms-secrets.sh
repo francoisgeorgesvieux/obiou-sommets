@@ -72,7 +72,6 @@ fi
 ask ADMIN_EMAIL "E-mail du compte admin" visible
 ask ADMIN_PASSWORD "Mot de passe admin (saisie masquée)" hidden
 ask LICENSE_KEY "Clé de licence Directus (saisie masquée)" hidden
-ask EMAIL_SMTP_PASSWORD "Clé API Resend re_… (saisie masquée)" hidden
 
 echo
 read -rp "Redéployer cms ($ENVIRONMENT) maintenant ? [o/N] : " deploy
