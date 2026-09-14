@@ -15,8 +15,8 @@ Projet frère d'[obioucounting](../obioucounting) (même propriétaire, même do
 
 **Phase 1 (fondations), presque close.** Site Nuxt et Directus en ligne en **production et staging**
 (admins créés, 2FA active, licence Open Innovation Grant reconnue, `ADMIN_PASSWORD` retirée des deux).
-Reste : vérifier la sauvegarde du 2026-09-15 03:00 UTC (première avec les tables Directus), domaines
-personnalisés `sommets.obiou.eu` / `admin.sommets.obiou.eu` (DNS Hostinger).
+Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Reste : vérifier la sauvegarde du
+2026-09-15 03:00 UTC (première avec les tables Directus).
 
 - **Décidé par le propriétaire (2026-09-13)** : sous-domaine `sommets.obiou.eu` ; site personnel
   **non commercial, sans publicité** ; contenu = ses propres sorties, **Alpes + Corée du Sud**.
@@ -52,8 +52,8 @@ Projet `obiou-sommets` (`0081f1e1-c1bc-4fb5-9f4f-8b599e56aba4`), offre Hobby.
 | Élément | Production (`298b2eb8-4c02-4d16-b6d0-a8c0847f97ee`) |
 |---|---|
 | `TimescaleDB` (`c4740fd6…`) | Postgres 17 + PostGIS 3.5, image `timescale-postgis-ssl:pg17-ts2.17`, volume, **aucun proxy TCP public** |
-| `web` (`d8e1e7b6…`) | `apps/web/Dockerfile`, healthcheck `/api/health`, `web-production-3283c.up.railway.app` |
-| `cms` (`fa57adf1…`) | racine `/apps/cms`, healthcheck `/server/ping`, `cms-production-02a9.up.railway.app` |
+| `web` (`d8e1e7b6…`) | `apps/web/Dockerfile`, healthcheck `/api/health`, **https://sommets.obiou.eu** (+ `web-production-3283c.up.railway.app`) |
+| `cms` (`fa57adf1…`) | racine `/apps/cms`, healthcheck `/server/ping`, **https://admin.sommets.obiou.eu** (`PUBLIC_URL`) (+ `cms-production-02a9.up.railway.app`) |
 | `backup` (`7c632da2…`) | racine `/infra/backup`, cron `0 3 * * *`, redémarrage `NEVER` |
 | buckets | `obiou-sommets-files` (uploads Directus) et `obiou-sommets-backups`, région `ams` |
 
@@ -77,6 +77,12 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
 - **Config** : les `railway.json` sont abandonnés par Railway (lus jusqu'au 2026-12-01 pour les
   anciens services seulement) ; les réglages sont posés via l'API, à versionner dans
   `.railway/railway.ts` (`railway config pull`).
+- **Domaines personnalisés** (actifs le 2026-09-14, certificats Let's Encrypt renouvelés par Railway) :
+  il faut **un CNAME et un TXT `_railway-verify.<sous-domaine>`** chez Hostinger pour chaque domaine.
+  L'outil MCP `generate-domain` n'affiche que le CNAME : sans le TXT, le certificat reste bloqué en
+  `VALIDATING_OWNERSHIP`. Valeurs exactes : `railway domain status <domaine> --service <svc> --json`.
+  L'IaC ne sait pas créer un domaine (le déclarer via l'API, puis le décrire dans `railway.ts`).
+  Railway redirige lui-même `http://` vers `https://`.
 - **Watch patterns** : un commit hors du périmètre d'un service donne un déploiement `SKIPPED`, c'est
   normal.
 - **Secrets posés par le propriétaire uniquement** (jamais par Claude) : `cms` → `SECRET`,
