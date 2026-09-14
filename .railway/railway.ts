@@ -38,6 +38,8 @@ export default defineRailway((ctx) => {
     healthcheck: "/api/health",
     healthcheckTimeout: 120,
     replicas: EU_WEST,
+    // Custom domains in production only; staging keeps its *.up.railway.app domain.
+    domains: prod ? [{ domain: "sommets.obiou.eu", port: 3000 }] : [],
     deploy: { restartPolicyMaxRetries: 5, ...idle },
     env: { NUXT_DATABASE_URL: preserve(), NUXT_PUBLIC_SITE_URL: preserve(), PORT: preserve() },
   });
@@ -48,6 +50,7 @@ export default defineRailway((ctx) => {
     healthcheck: "/server/ping",
     healthcheckTimeout: 300,
     replicas: EU_WEST,
+    domains: prod ? [{ domain: "admin.sommets.obiou.eu", port: 8055 }] : [],
     deploy: { restartPolicyMaxRetries: 5, ...idle },
     // Secrets set by the owner with infra/scripts/set-cms-secrets.sh. They MUST stay listed:
     // omitting a variable here makes `railway config apply` delete it.
