@@ -90,8 +90,11 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
   (SMTP uniquement côté Directus) ne peut donc pas servir. **Décision du propriétaire (2026-09-14) : pas
   d'e-mail.** Comptes créés à la main ; mot de passe perdu → réinitialisation par l'admin ou en CLI.
   Variables `EMAIL_*` retirées. Si besoin plus tard : transport `mailgun` (API HTTPS, autorisée sur Hobby).
-- **`SECRET` de staging** généré par le script, connu de personne : c'est voulu. Il signe les sessions ;
-  le changer déconnecte tout le monde, sans autre perte. Il reste lisible dans Railway (non scellé).
+- **`SECRET` ne se change jamais** (vérifié dans le code de Directus 12.3, `services/payload.js` et
+  `services/mcp-oauth`) : il signe les sessions **et chiffre les champs marqués `encrypt`** (clés
+  stockées dans les paramètres, consentements OAuth MCP). Un autre `SECRET` → ces champs deviennent
+  illisibles (`null`). Une sauvegarde de base n'est donc restaurable qu'**avec** son `SECRET` : il doit
+  être dans le gestionnaire du propriétaire, pour chaque environnement.
 - **Secrets** : les poser avec `infra/scripts/set-cms-secrets.sh <env>`, pas avec le formulaire du
   dashboard, qui a produit deux fois des variables vides (invisibles une fois scellées).
 - **Licence Directus** : sans clé, le niveau Core ignore les règles de permission personnalisées.
