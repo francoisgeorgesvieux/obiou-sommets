@@ -13,9 +13,10 @@ Projet frère d'[obioucounting](../obioucounting) (même propriétaire, même do
 
 ## État
 
-**Phase 1 (fondations), presque close.** Site Nuxt et Directus en ligne en production (admin créé,
-2FA active, licence Open Innovation Grant reconnue). Reste : secrets de staging, vérification d'une
-sauvegarde contenant les tables Directus, domaines personnalisés `sommets.obiou.eu`.
+**Phase 1 (fondations), presque close.** Site Nuxt et Directus en ligne en **production et staging**
+(admins créés, 2FA active, licence Open Innovation Grant reconnue, `ADMIN_PASSWORD` retirée des deux).
+Reste : vérifier la sauvegarde du 2026-09-15 03:00 UTC (première avec les tables Directus), domaines
+personnalisés `sommets.obiou.eu` / `admin.sommets.obiou.eu` (DNS Hostinger).
 
 - **Décidé par le propriétaire (2026-09-13)** : sous-domaine `sommets.obiou.eu` ; site personnel
   **non commercial, sans publicité** ; contenu = ses propres sorties, **Alpes + Corée du Sud**.
@@ -89,6 +90,8 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
   (SMTP uniquement côté Directus) ne peut donc pas servir. **Décision du propriétaire (2026-09-14) : pas
   d'e-mail.** Comptes créés à la main ; mot de passe perdu → réinitialisation par l'admin ou en CLI.
   Variables `EMAIL_*` retirées. Si besoin plus tard : transport `mailgun` (API HTTPS, autorisée sur Hobby).
+- **`SECRET` de staging** généré par le script, connu de personne : c'est voulu. Il signe les sessions ;
+  le changer déconnecte tout le monde, sans autre perte. Il reste lisible dans Railway (non scellé).
 - **Secrets** : les poser avec `infra/scripts/set-cms-secrets.sh <env>`, pas avec le formulaire du
   dashboard, qui a produit deux fois des variables vides (invisibles une fois scellées).
 - **Licence Directus** : sans clé, le niveau Core ignore les règles de permission personnalisées.
