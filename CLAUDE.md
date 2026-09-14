@@ -78,6 +78,13 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
   `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `LICENSE_KEY`, `EMAIL_SMTP_PASSWORD` (clé Resend). Sans `SECRET`,
   ou sur une base vide sans compte admin, le conteneur refuse de démarrer (voir
   `apps/cms/obiou/entrypoint.cjs`).
+- **Pas d'e-mail sortant par SMTP** : Railway bloque le SMTP sortant sur l'offre Hobby (réservé à Pro,
+  [doc](https://docs.railway.com/networking/outbound-networking#email-delivery)). Mesuré le
+  2026-09-14 : `Connection timeout` vers Resend, alors qu'une mauvaise clé aurait donné une erreur
+  d'authentification. Directus ne gère que `smtp`, `sendmail`, `mailgun` et `ses` : Resend
+  (SMTP uniquement côté Directus) ne peut donc pas servir. Choix en cours avec le propriétaire.
+- **Secrets** : les poser avec `infra/scripts/set-cms-secrets.sh <env>`, pas avec le formulaire du
+  dashboard, qui a produit deux fois des variables vides (invisibles une fois scellées).
 - **Licence Directus** : sans clé, le niveau Core ignore les règles de permission personnalisées.
   Le rôle « Agent IA » (MCP admin) **ne doit pas être activé** avant une licence Innovation Grant active.
 - **Sauvegardes** : chiffrées vers la clé publique age dans `AGE_RECIPIENT`. La clé privée est chez le
