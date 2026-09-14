@@ -37,6 +37,13 @@ function fail(message) {
   process.exit(1);
 }
 
+/** Names of the variables that are unset or blank, with which of the two. Never logs a value. */
+function missingVars(names) {
+  return names
+    .filter((name) => !process.env[name]?.trim())
+    .map((name) => `${name} (${name in process.env ? 'empty' : 'not set'})`);
+}
+
 /**
  * Refuse to boot with settings that fail silently:
  * - no SECRET: Directus invents one per boot and every session dies on redeploy;
@@ -44,7 +51,8 @@ function fail(message) {
  *   admin with a generated password written to the logs.
  */
 async function checkDatabaseAndConfig() {
-  if (!process.env.SECRET) fail('SECRET is not set; refusing to start.');
+  const missingSecret = missingVars(['SECRET']);
+  if (missingSecret.length) fail(`missing ${missingSecret.join(', ')}; refusing to start.`);
   if (process.env.DB_CLIENT !== 'pg') return;
 
   const { Client } = apiRequire('pg');
@@ -62,8 +70,9 @@ async function checkDatabaseAndConfig() {
       const users = await client.query('select count(*) as n from directus_users');
       fresh = Number(users.rows[0].n) === 0;
     }
-    if (fresh && !(process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD)) {
-      fail('fresh database: set ADMIN_EMAIL and ADMIN_PASSWORD before the first boot; refusing to start.');
+    const missingAdmin = missingVars(['ADMIN_EMAIL', 'ADMIN_PASSWORD']);
+    if (fresh && missingAdmin.length) {
+      fail(`fresh database, first admin cannot be created: missing ${missingAdmin.join(', ')}; refusing to start.`);
     }
   } finally {
     await client.end();
