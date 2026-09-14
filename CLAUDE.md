@@ -18,6 +18,34 @@ Projet frère d'[obioucounting](../obioucounting) (même propriétaire, même do
 Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Reste : vérifier la sauvegarde du
 2026-09-15 03:00 UTC (première avec les tables Directus).
 
+## ▶ Prochaine session : reprendre ici
+
+**1. Clore la phase 1 (avec le propriétaire)**
+- Lire le run du service `backup` (production) de **2026-09-15 03:00 UTC** : `list-deployments`
+  / `get-logs` sur `7c632da2…`. Attendu : `✓ backup uploaded and verified restorable: … (N tables)`
+  avec **N > 0** (le run de test du 13 disait 0 table, Directus n'existait pas encore). Un run rouge =
+  pas de sauvegarde ce jour-là.
+- Test de restauration **par le propriétaire** (la clé privée age n'est que sur son Mac) : suivre
+  `infra/backup/restore.md`, sur une base Docker locale jetable, puis compter les tables `directus_*`.
+- Si tout est vert : cocher la phase 1 dans `docs/02-roadmap-deploiement.md`, mettre à jour ce fichier.
+
+**2. Préparer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
+- Décisions encore ouvertes à trancher d'abord : D2 cotation (SAC T1–T6 recommandée), D5 FIT au
+  lancement, D7 comptes utilisateurs, D9 fond de carte hors France. D6 est tranchée : dépôt **public**.
+- Modéliser les collections dans Directus **staging** (sommets, itinéraires, sorties, régions…),
+  puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
+- Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
+  `packages/geo`.
+
+**Déjà vérifié le 2026-09-14, inutile de refaire** : Directus en prod + staging (2FA, licence Open
+Innovation Grant), domaines HTTPS, plan IaC vide sur les deux environnements, carte IGN affichée.
+
+**Rappels de méthode** : secrets posés par le propriétaire uniquement (script `set-cms-secrets.sh`),
+jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser sur `main` **et**
+`staging` (`git push origin main && git push origin main:staging`) tant qu'il n'y a pas de PR.
+
+## Décisions
+
 - **Décidé par le propriétaire (2026-09-13)** : sous-domaine `sommets.obiou.eu` ; site personnel
   **non commercial, sans publicité** ; contenu = ses propres sorties, **Alpes + Corée du Sud**.
 - **Encore ouvert** : D2, D5, D6, D7, D9 de
