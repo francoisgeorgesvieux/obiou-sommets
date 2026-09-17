@@ -44,4 +44,11 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
   },
+
+  nitro: {
+    typescript: {
+      // Server unit tests type-check against the server context (test/nuxt is in the app context).
+      tsConfig: { include: ['../test/unit/**/*'] },
+    },
+  },
 })

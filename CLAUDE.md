@@ -67,8 +67,21 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
      d'avant le push (`github.event.before`) ou la base de la PR ; en local, `origin/main`.
   Un package n'est contrôlé que s'il a `@vitest/coverage-v8` et un `vitest.config.ts` avec
   `coverage.include` (sans `include`, un fichier que rien n'importe est invisible) : copier celui de
-  `packages/geo`. **`apps/web` n'est pas encore contrôlé** (pas d'environnement de test Nuxt) : le
-  script le signale à chaque run.
+  `packages/geo`. Les deux packages actuels sont contrôlés ; le script signale ceux qui ne le sont pas.
+- **Tests de `apps/web`**, deux projets Vitest (`apps/web/vitest.config.ts`) :
+  - `test/unit/` (Node) : routes Nitro et `server/utils`, servies par une **vraie app h3**
+    (`fetchRoute`). Hors build, les auto-imports de Nitro n'existent pas : `test/unit/nitro.ts` les
+    pose en globales (h3, `useRuntimeConfig` lu dans `runtimeConfig`, exports de `server/utils`).
+    **Un nouveau fichier de `server/utils` s'ajoute à la liste `serverUtils`**, sinon
+    `<nom> is not defined`. Un test remplace une dépendance par `vi.stubGlobal('useDb', …)` ;
+  - `test/nuxt/` (app Nuxt dans happy-dom) : pages et composants avec `mountSuspended`,
+    `registerEndpoint` pour les appels `/api`, `mockComponent('CarteIgn', …)` et `vi.mock('maplibre-gl')`
+    (pas de WebGL). Pièges mesurés le 2026-09-17 : `await useFetch(…, { server: false })` **bloque**
+    le montage côté client jusqu'à la réponse (l'état « en attente » n'existe qu'au rendu serveur :
+    le tester avec `mockNuxtImport('useFetch', …)` dans un fichier à part) ; `mockNuxtImport` vaut
+    pour tout le fichier ; vider `clearNuxtData()` entre deux tests d'un même `useFetch`.
+  `test/unit` est rattaché au tsconfig serveur (`nitro.typescript.tsConfig` dans `nuxt.config.ts`),
+  `test/nuxt` au tsconfig app par Nuxt : `pnpm typecheck` vérifie aussi les tests.
 - TypeScript est **épinglé en 6.x** : TS 7 casse `vue-tsc` et `typescript-eslint` (mesuré le 2026-09-13)
 - pnpm 12 bloque les scripts d'installation des dépendances : les autorisations sont dans
   `allowBuilds` de `pnpm-workspace.yaml`. Une dépendance non décidée ne fait échouer l'install
