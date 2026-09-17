@@ -99,6 +99,17 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
     rempli, se lit comme un incident IGN, pas comme une régression ;
   - **refuser une requête IGN fait journaliser une `AJAXError` par MapLibre**, et chaque test échoue
     sur toute erreur console ou exception ;
+  - **Firefox sans interface sous Linux n'a pas WebGL** (mesuré en CI le 2026-09-17) : les tests de
+    carte s'y ignorent explicitement, Chromium et WebKit restent stricts. Ne pas tenter de forcer
+    WebGL par les préférences Firefox (`webgl.force-enabled`, `gfx.webrender.software`) : ça le
+    **casse** là où il marchait (macOS, 2026-09-18). C'est ce cas qui a révélé que la page entière
+    tombait en erreur 500 quand MapLibre échoue ; la carte attrape maintenant l'échec et le dit.
+    `test/e2e/sans-webgl.spec.ts` désactive vraiment WebGL et vérifie que le site reste servi ;
+  - **détecter une capacité du navigateur sur `about:blank`**, jamais en chargeant la page deux
+    fois : le second chargement interrompt les requêtes de MapLibre, qui journalise une erreur ;
+  - **un serveur déjà en écoute sur le port 3100 est réutilisé** (`reuseExistingServer` en local) :
+    après un `rm -rf .output`, un vieux serveur sert des fichiers disparus et **tout** échoue en 500.
+    Le tuer avant de relancer ;
   - **la base attendue ne se lit jamais sur le site** : `target.database` vaut « oui » pour un site
     déployé, sinon `NUXT_DATABASE_URL`. `E2E_DATABASE=0` le force à « non » (serveur `pnpm dev` visé
     par `E2E_BASE_URL`, par exemple). Un staging qui répondrait « pas de base » doit échouer ;
