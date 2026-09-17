@@ -24,6 +24,8 @@ jobs:
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # the patch coverage gate diffs against the base commit
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
@@ -33,7 +35,16 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
+      # With coverage where configured: fails below a package's floor (vitest.config.ts thresholds).
       - run: pnpm test
+      # Lines added since the base must be >= 85 % covered. Base: the PR base, or on a push the
+      # commit the branch was at before it (no PR yet: pushes go straight to main and staging).
+      - name: Patch coverage
+        # Also after a failed floor: the report is still written, and this names the uncovered lines.
+        if: ${{ !cancelled() }}
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: node scripts/patch-coverage.mjs --base "$BASE" --min 85
       - run: pnpm build
-      - name: Backup script syntax
-        run: sh -n infra/backup/backup.sh
+      - name: Backup scripts syntax
+        run: sh -n infra/backup/backup.sh && bash -n infra/backup/restore-test.sh

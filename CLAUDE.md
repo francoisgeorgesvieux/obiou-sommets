@@ -27,7 +27,8 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
 - Modéliser les collections dans Directus **staging** (sommets, itinéraires, sorties, régions…),
   puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
-  `packages/geo`.
+  `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
+  du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
 - `packages/domain` et `db/views` n'existent pas encore (prévus en phase 1, reportés) : les créer
   avec les collections.
 
@@ -54,7 +55,20 @@ jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser s
 pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack pnpm`).
 
 - `pnpm install` · `pnpm dev` (Nuxt) · `docker compose up -d` (Postgres PostGIS + Directus locaux)
-- `pnpm check` = lint + typecheck + tests, comme la CI ; `pnpm build` construit le site
+- `pnpm check` = lint + typecheck + tests + contrôle des lignes modifiées, comme la CI ; `pnpm build`
+  construit le site. **À lancer avant chaque commit.**
+- **Couverture de tests, deux règles en CI** (mécanique reprise d'obioucounting) :
+  1. **plancher par package** (`coverage.thresholds` dans `vitest.config.ts`) : un test qui fait
+     baisser la couverture sous le plancher échoue. Le plancher **remonte tout seul** quand la
+     couverture progresse (`autoUpdate`, arrondi à l'entier inférieur) : `pnpm check` modifie alors
+     `vitest.config.ts`, **committer ce changement avec le code**. Ne jamais baisser un plancher à la
+     main. `packages/geo` est à 100 % : chaque nouvelle ligne y demande un test ;
+  2. **lignes modifiées couvertes à 85 % minimum** (`scripts/patch-coverage.mjs`). Base : le commit
+     d'avant le push (`github.event.before`) ou la base de la PR ; en local, `origin/main`.
+  Un package n'est contrôlé que s'il a `@vitest/coverage-v8` et un `vitest.config.ts` avec
+  `coverage.include` (sans `include`, un fichier que rien n'importe est invisible) : copier celui de
+  `packages/geo`. **`apps/web` n'est pas encore contrôlé** (pas d'environnement de test Nuxt) : le
+  script le signale à chaque run.
 - TypeScript est **épinglé en 6.x** : TS 7 casse `vue-tsc` et `typescript-eslint` (mesuré le 2026-09-13)
 - pnpm 12 bloque les scripts d'installation des dépendances : les autorisations sont dans
   `allowBuilds` de `pnpm-workspace.yaml`. Une dépendance non décidée ne fait échouer l'install

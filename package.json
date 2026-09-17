@@ -12,7 +12,8 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "build": "pnpm --filter web build",
-    "check": "pnpm lint && pnpm typecheck && pnpm test"
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm coverage:patch",
+    "coverage:patch": "node scripts/patch-coverage.mjs --base origin/main"
   },
   "devDependencies": {
     "railway": "^3.11.0",
