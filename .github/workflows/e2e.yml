@@ -1,0 +1,56 @@
+name: E2E
+
+# Real browser, real map: too slow and too dependent on the IGN service to run on every push.
+# Nightly on the three targets, and on demand from the Actions tab.
+on:
+  schedule:
+    - cron: "30 4 * * *" # after the 03:00 UTC backup
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Site to test
+        type: choice
+        options: [local, staging, production]
+        default: local
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: E2E ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{ fromJSON(github.event_name == 'schedule' && '["local","staging","production"]' || format('["{0}"]', inputs.target)) }}
+    env:
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      # Empty for `local`: Playwright then builds the site and serves it itself.
+      E2E_BASE_URL: ${{ matrix.target == 'staging' && 'https://web-staging-6028.up.railway.app' || matrix.target == 'production' && 'https://sommets.obiou.eu' || '' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Chromium for Playwright
+        run: pnpm --filter web exec playwright install --with-deps chromium
+      - run: pnpm e2e
+      - name: Report
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-${{ matrix.target }}
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
+          retention-days: 14
+          if-no-files-found: ignore

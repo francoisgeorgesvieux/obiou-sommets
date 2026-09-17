@@ -15,3 +15,8 @@ design/maquettes-*.html
 *.tsbuildinfo
 .eslintcache
 .claude/settings.local.json
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/

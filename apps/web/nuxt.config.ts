@@ -43,6 +43,8 @@ export default defineNuxtConfig({
 
   typescript: {
     strict: true,
+    // Playwright runs in Node: its config and end-to-end tests type-check in the node context.
+    nodeTsConfig: { include: ['../playwright.config.ts', '../test/e2e/**/*'] },
   },
 
   nitro: {

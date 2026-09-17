@@ -82,6 +82,23 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
     pour tout le fichier ; vider `clearNuxtData()` entre deux tests d'un même `useFetch`.
   `test/unit` est rattaché au tsconfig serveur (`nitro.typescript.tsConfig` dans `nuxt.config.ts`),
   `test/nuxt` au tsconfig app par Nuxt : `pnpm typecheck` vérifie aussi les tests.
+- **Tests de bout en bout (Playwright)** : `pnpm e2e` (build de production servi en local, port 3100)
+  ou `E2E_BASE_URL=https://… pnpm e2e` pour un site déployé. Projets `bureau` et `mobile`.
+  **Pas dans la CI de chaque push** : workflow `e2e.yml`, chaque nuit à 04:30 UTC sur les trois
+  cibles (local, staging, production) et à la demande. Points mesurés le 2026-09-17 :
+  - **la carte est vérifiée sur les pixels** : Chromium headless rend le WebGL en logiciel
+    (SwiftShader) et dessine vraiment le plan IGN. Une carte vide compte 360 à 560 couleurs (les
+    seuls contrôles), une carte dessinée plus de 16 000 ; seuil du test : 3 000. Les deux pièges
+    MapLibre sont silencieux, d'où la mesure sur l'image plutôt que sur la console ;
+  - **l'IGN bride les rafales** : une salve de chargements de carte (calibrage) a fait échouer le
+    lancement suivant, carte vide et aucune erreur côté site. D'où : les tests de page servent un
+    style vide au lieu d'appeler l'IGN (`withoutMapTiles`), une tentative de plus en CI, et les
+    requêtes IGN refusées jointes au rapport d'échec. Un échec de la carte seule, avec `ign.txt`
+    rempli, se lit comme un incident IGN, pas comme une régression ;
+  - **refuser une requête IGN fait journaliser une `AJAXError` par MapLibre**, et chaque test échoue
+    sur toute erreur console ou exception ;
+  - retirer `vite.worker.format: 'es'` **ne casse plus** la carte (Vite 8) : le test reste vert. Le
+    réglage est conservé, mais il n'est plus couvert par un test.
 - TypeScript est **épinglé en 6.x** : TS 7 casse `vue-tsc` et `typescript-eslint` (mesuré le 2026-09-13)
 - pnpm 12 bloque les scripts d'installation des dépendances : les autorisations sont dans
   `allowBuilds` de `pnpm-workspace.yaml`. Une dépendance non décidée ne fait échouer l'install

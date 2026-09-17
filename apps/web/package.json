@@ -9,7 +9,8 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "maplibre-gl": "^6.9.0",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",
     "@nuxt/test-utils": "^4.3.2",
+    "@playwright/test": "^1.63.0",
     "@vitest/coverage-v8": "^5.0.1",
     "@vue/test-utils": "^2.5.0",
     "eslint": "^10.10.0",

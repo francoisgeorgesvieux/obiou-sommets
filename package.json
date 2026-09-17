@@ -13,7 +13,8 @@
     "test": "pnpm -r test",
     "build": "pnpm --filter web build",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm coverage:patch",
-    "coverage:patch": "node scripts/patch-coverage.mjs --base origin/main"
+    "coverage:patch": "node scripts/patch-coverage.mjs --base origin/main",
+    "e2e": "pnpm --filter web e2e"
   },
   "devDependencies": {
     "railway": "^3.11.0",
