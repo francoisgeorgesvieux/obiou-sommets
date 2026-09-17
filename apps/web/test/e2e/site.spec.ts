@@ -30,8 +30,8 @@ test.describe('home page', () => {
 })
 
 test.describe('HTTP contract', () => {
-  // No page involved: one run is enough.
-  test.skip(({ isMobile }) => isMobile, 'HTTP only, already covered by the desktop project')
+  // No browser involved: one run is enough.
+  test.skip(({ browserName, isMobile }) => browserName !== 'chromium' || Boolean(isMobile), 'HTTP only, covered by the chrome project')
 
   test('/api/health reports the database, never cached', async ({ request }) => {
     const response = await request.get('/api/health')

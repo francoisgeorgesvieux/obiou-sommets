@@ -20,9 +20,13 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
+  // The three engines, on a desktop and a phone: the map is WebGL, where they differ most.
   projects: [
-    { name: 'bureau', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'chrome', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chrome-mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'safari', use: { ...devices['Desktop Safari'] } },
+    { name: 'safari-mobile', use: { ...devices['iPhone 15'] } },
   ],
   // Locally, the production build (what Railway runs), on its own port so a dev server on 3000 is
   // never tested by mistake.

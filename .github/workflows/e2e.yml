@@ -41,8 +41,14 @@ jobs:
           package-manager-cache: false
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
-      - name: Chromium for Playwright
-        run: pnpm --filter web exec playwright install --with-deps chromium
+      # The browsers are a 400 MB download; the cache is keyed on the lockfile, which pins their
+      # versions through @playwright/test. Their system libraries still come from apt every run.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Browsers for Playwright
+        run: pnpm --filter web exec playwright install --with-deps chromium firefox webkit
       - run: pnpm e2e
       - name: Report
         if: failure()

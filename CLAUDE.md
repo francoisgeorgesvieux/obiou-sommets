@@ -83,7 +83,9 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
   `test/unit` est rattaché au tsconfig serveur (`nitro.typescript.tsConfig` dans `nuxt.config.ts`),
   `test/nuxt` au tsconfig app par Nuxt : `pnpm typecheck` vérifie aussi les tests.
 - **Tests de bout en bout (Playwright)** : `pnpm e2e` (build de production servi en local, port 3100)
-  ou `E2E_BASE_URL=https://… pnpm e2e` pour un site déployé. Projets `bureau` et `mobile`.
+  ou `E2E_BASE_URL=https://… pnpm e2e` pour un site déployé. Cinq projets, les trois moteurs sur
+  bureau et téléphone : `chrome`, `chrome-mobile`, `firefox`, `safari`, `safari-mobile` (les tests
+  purement HTTP ne tournent que sur `chrome`).
   **Pas dans la CI de chaque push** : workflow `e2e.yml`, chaque nuit à 04:30 UTC sur les trois
   cibles (local, staging, production) et à la demande. Points mesurés le 2026-09-17 :
   - **la carte est vérifiée sur les pixels** : Chromium headless rend le WebGL en logiciel
