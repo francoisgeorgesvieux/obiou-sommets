@@ -1,6 +1,6 @@
 # obiou-sommets — contexte projet pour Claude
 
-> Document de passation vivant. Dernière mise à jour : **2026-09-14**.
+> Document de passation vivant. Dernière mise à jour : **2026-09-17**.
 
 ## Ce que c'est
 
@@ -13,23 +13,15 @@ Projet frère d'[obioucounting](../obioucounting) (même propriétaire, même do
 
 ## État
 
-**Phase 1 (fondations), presque close.** Site Nuxt et Directus en ligne en **production et staging**
-(admins créés, 2FA active, licence Open Innovation Grant reconnue, `ADMIN_PASSWORD` retirée des deux).
-Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Reste : vérifier la sauvegarde du
-2026-09-15 03:00 UTC (première avec les tables Directus).
+**Phase 1 (fondations) close le 2026-09-17.** Site Nuxt et Directus en ligne en **production et
+staging** (admins créés, 2FA active, licence Open Innovation Grant reconnue, `ADMIN_PASSWORD` retirée
+des deux). Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Sauvegarde nocturne verte
+depuis le 15 (36 tables), dump de production restauré par le propriétaire le 17 (36 tables, dont 33
+`directus_*`). **Phase 2 (CMS et pipeline GPX) : pas commencée.**
 
 ## ▶ Prochaine session : reprendre ici
 
-**1. Clore la phase 1 (avec le propriétaire)**
-- Lire le run du service `backup` (production) de **2026-09-15 03:00 UTC** : `list-deployments`
-  / `get-logs` sur `7c632da2…`. Attendu : `✓ backup uploaded and verified restorable: … (N tables)`
-  avec **N > 0** (le run de test du 13 disait 0 table, Directus n'existait pas encore). Un run rouge =
-  pas de sauvegarde ce jour-là.
-- Test de restauration **par le propriétaire** (la clé privée age n'est que sur son Mac) : suivre
-  `infra/backup/restore.md`, sur une base Docker locale jetable, puis compter les tables `directus_*`.
-- Si tout est vert : cocher la phase 1 dans `docs/02-roadmap-deploiement.md`, mettre à jour ce fichier.
-
-**2. Préparer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
+**Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
 - Décisions encore ouvertes à trancher d'abord : D2 cotation (SAC T1–T6 recommandée), D5 FIT au
   lancement, D7 comptes utilisateurs, D9 fond de carte hors France. D6 est tranchée : dépôt **public**.
 - Modéliser les collections dans Directus **staging** (sommets, itinéraires, sorties, régions…),
@@ -37,8 +29,9 @@ Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Reste : vérif
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`.
 
-**Déjà vérifié le 2026-09-14, inutile de refaire** : Directus en prod + staging (2FA, licence Open
-Innovation Grant), domaines HTTPS, plan IaC vide sur les deux environnements, carte IGN affichée.
+**Déjà vérifié, inutile de refaire** : le 2026-09-14, Directus en prod + staging (2FA, licence Open
+Innovation Grant), domaines HTTPS, plan IaC vide sur les deux environnements, carte IGN affichée ;
+le 2026-09-17, sauvegardes des 15, 16 et 17 vertes et restauration réelle réussie.
 
 **Rappels de méthode** : secrets posés par le propriétaire uniquement (script `set-cms-secrets.sh`),
 jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser sur `main` **et**
@@ -135,7 +128,15 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
   Le rôle « Agent IA » (MCP admin) **ne doit pas être activé** avant une licence Innovation Grant active.
 - **Sauvegardes** : chiffrées vers la clé publique age dans `AGE_RECIPIENT`. La clé privée est chez le
   propriétaire (`~/.config/obiou-sommets/backup-age.key`), jamais sur Railway. Restauration :
-  `infra/backup/restore.md`.
+  `infra/backup/restore.md`. Test de restauration **par le propriétaire** :
+  `infra/backup/restore-test.sh` (tout dans Docker, rien à installer, environ 10 s). Les runs se
+  lisent avec `get-logs` sur le déploiement actif du service `backup` : un cron ne crée pas de
+  nouveau déploiement, tous les runs sont dans les logs du même. Les lignes rouges
+  `pg_dump: warning … hypertable/chunk/continuous_agg` sont normales (catalogue TimescaleDB).
+- **La base contient TimescaleDB** (image `timescale-postgis-ssl`), pas seulement PostGIS : un dump
+  ne se restaure que sur un serveur qui a les deux. L'image PostGIS du `docker-compose.yml` local
+  échoue sur `extension "timescaledb" is not available` (mesuré le 2026-09-17). L'image de
+  production n'existe qu'en amd64 : émulée sur Mac Apple Silicon, ça fonctionne.
 
 ## Invariants proposés (à confirmer en phase 0)
 

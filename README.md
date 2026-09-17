@@ -6,10 +6,11 @@ FIT) pour le téléphone ou la montre. Le contenu se gère depuis une interface 
 code. Visiteurs et éditeurs peuvent aussi passer par un assistant IA via MCP.
 
 Site personnel et non commercial : les sommets gravis par l'auteur dans les Alpes et en Corée du Sud.
-Hébergement prévu : `sommets.obiou.eu`.
+En ligne sur `sommets.obiou.eu`.
 
-> **Statut : phase 1, fondations.** Monorepo, CI et infrastructure Railway en place. Pas encore de
-> contenu ni de fonctionnalités publiques.
+> **Statut : phase 2, CMS et pipeline GPX.** Fondations closes le 17 sept. 2026 : monorepo, CI,
+> infrastructure Railway, Directus et sauvegardes restaurables. Pas encore de contenu ni de
+> fonctionnalités publiques.
 
 **Maquettes (45 écrans : parcours visiteur, pages publiques, back-office, design system)** : https://claude.ai/code/artifact/bb79abd1-e08c-4cf9-834a-017c95d230ec
 (sources des écrans dans [`design/`](design/)).
@@ -26,7 +27,7 @@ Hébergement prévu : `sommets.obiou.eu`.
 ## Stack
 
 Nuxt 4 · Directus 12 · PostgreSQL 17 + PostGIS · MapLibre GL + IGN Géoplateforme ·
-MCP (`@nuxtjs/mcp-toolkit` et MCP intégré Directus) · Railway · Resend
+MCP (`@nuxtjs/mcp-toolkit` et MCP intégré Directus) · Railway
 
 ## Organisation du dépôt
 

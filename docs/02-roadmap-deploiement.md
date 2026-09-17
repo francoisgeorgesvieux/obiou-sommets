@@ -57,27 +57,27 @@ On ouvre juste avant que les recherches « randonnée + sommet » remontent.
 **Critère de sortie** : maquettes validées pour la carte, la fiche sommet, la fiche itinéraire, le
 téléchargement et l'import GPX admin. Décisions D1 à D8 écrites. Liste des 15 sommets prête.
 
-## Phase 1 — Fondations · 5 → 18 oct. 2026
+## Phase 1 — Fondations · 5 → 18 oct. 2026 · ✅ close le 17 sept. 2026
 
-> **Avancement au 13 sept. 2026** : monorepo, CI verte, dépôt public, projet Railway (production et
-> staging) en EU West, site Nuxt en ligne avec contrôle de la base, image Directus et sauvegarde
-> testées. **Reste côté propriétaire** : poser les secrets Directus (`SECRET`, compte admin, clé
-> licence), puis vérifier la première connexion à l'admin. Détails dans `CLAUDE.md`.
-> **14 sept.** : Directus en ligne en production, 2FA et licence actives. Pas d'e-mail (SMTP bloqué).
+> **Close le 17 sept. 2026**, en avance sur le calendrier. Site et admin en ligne en production
+> (`sommets.obiou.eu`, `admin.sommets.obiou.eu`) et en staging, Directus avec 2FA et licence, pas
+> d'e-mail (SMTP bloqué sur Hobby). Sauvegarde nocturne verte depuis le 15 sept. (36 tables), et
+> dump de production du 17 restauré par le propriétaire sur une base locale jetable avec
+> `infra/backup/restore-test.sh` : 36 tables, dont 33 `directus_*`. Détails dans `CLAUDE.md`.
 
 **Objectif** : un `git push` déploie tout seul en staging, et une sauvegarde est restaurable.
 
-- Monorepo pnpm (`apps/web`, `apps/cms`, `packages/geo`, `packages/domain`, `db/views`), lint,
+- ✅ Monorepo pnpm (`apps/web`, `apps/cms`, `packages/geo`, `packages/domain`, `db/views`), lint,
   typecheck, Vitest, `CLAUDE.md`.
-- Dépôt GitHub (public recommandé), CI unique et frugale.
-- Railway (voir la [procédure](#procédure-de-déploiement-railway--obioueu) ci-dessous) :
+- ✅ Dépôt GitHub public, CI unique et frugale.
+- ✅ Railway (voir la [procédure](#procédure-de-déploiement-railway--obioueu) ci-dessous) :
   - projet `obiou-sommets`, environnements `staging` et `production` ;
-  - Postgres **avec PostGIS**, volume persistant, **région EU vérifiée** ;
+  - Postgres **avec PostGIS** (et TimescaleDB), volume persistant, **région EU vérifiée** ;
   - bucket S3, région EU ;
   - service `cms` (Directus 12) et service `web` (Nuxt « hello carte ») branchés sur GitHub.
-- DNS Hostinger pour staging (ou domaines `*.up.railway.app` au début).
+- ✅ Domaines `*.up.railway.app` en staging, domaines personnalisés Hostinger en production.
 - ~~Resend branché sur Directus~~ : abandonné, Railway Hobby bloque le SMTP sortant (14 sept. 2026).
-- Service `backup` (reprendre le modèle d'obioucounting), plus un **test de restauration réel**.
+- ✅ Service `backup` (modèle d'obioucounting), plus un **test de restauration réel** (17 sept.).
 
 **Critère de sortie** : merge sur `staging` → build Railway → site et admin accessibles. Restauration
 d'un dump réussie sur une base vierge.
