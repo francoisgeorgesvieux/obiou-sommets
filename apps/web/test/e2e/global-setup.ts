@@ -13,7 +13,9 @@ export default async function globalSetup(): Promise<void> {
   let last = 'no answer'
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`${baseURL}/api/health`, { signal: AbortSignal.timeout(30_000) })
+      // robots.txt, not /api/health: waiting for the server to answer at all, whatever it says
+      // about the database. A database problem must surface as a failed test, not as a setup error.
+      const response = await fetch(`${baseURL}/robots.txt`, { signal: AbortSignal.timeout(30_000) })
       if (response.ok) return
       last = `HTTP ${response.status}`
     }
@@ -22,5 +24,5 @@ export default async function globalSetup(): Promise<void> {
     }
     await new Promise((resolve) => setTimeout(resolve, 3_000))
   }
-  throw new Error(`${baseURL} did not answer /api/health within ${WAKE_UP_MS / 1000} s (last: ${last})`)
+  throw new Error(`${baseURL} did not answer within ${WAKE_UP_MS / 1000} s (last: ${last})`)
 }

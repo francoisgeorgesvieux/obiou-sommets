@@ -97,8 +97,11 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
     rempli, se lit comme un incident IGN, pas comme une régression ;
   - **refuser une requête IGN fait journaliser une `AJAXError` par MapLibre**, et chaque test échoue
     sur toute erreur console ou exception ;
-  - retirer `vite.worker.format: 'es'` **ne casse plus** la carte (Vite 8) : le test reste vert. Le
-    réglage est conservé, mais il n'est plus couvert par un test.
+  - **la base attendue ne se lit jamais sur le site** : `target.database` vaut « oui » pour un site
+    déployé, sinon `NUXT_DATABASE_URL`. `E2E_DATABASE=0` le force à « non » (serveur `pnpm dev` visé
+    par `E2E_BASE_URL`, par exemple). Un staging qui répondrait « pas de base » doit échouer ;
+  - le réveil attend une réponse de `robots.txt`, pas de `/api/health` : un problème de base doit
+    faire échouer un test, pas la préparation.
 - TypeScript est **épinglé en 6.x** : TS 7 casse `vue-tsc` et `typescript-eslint` (mesuré le 2026-09-13)
 - pnpm 12 bloque les scripts d'installation des dépendances : les autorisations sont dans
   `allowBuilds` de `pnpm-workspace.yaml`. Une dépendance non décidée ne fait échouer l'install
@@ -107,7 +110,11 @@ pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack
   console, carte simplement vide) :
   1. le worker est chargé par une URL calculée à l'exécution, donc jamais émis par Vite → 404.
      Correctif : `import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'` puis
-     `setWorkerUrl(workerUrl)`, avec `vite.worker.format: 'es'` ;
+     `setWorkerUrl(workerUrl)`. Le `vite.worker.format: 'es'` qui l'accompagnait a été **retiré le
+     2026-09-17** : avec Vite 8, le worker sort en **un seul fichier autonome** (507 ko, aucun
+     import), donc le format ne change rien. Vérifié sans lui, carte dessinée : build de production
+     et `pnpm dev`, en bureau et en mobile. L'IIFE par défaut est même le plus sûr pour un worker
+     classique ;
   2. dans un composant `*.client.vue`, la référence de template restait `null` au montage.
      Utiliser un composant normal dans `<ClientOnly>` avec `useTemplateRef`.
   Vérifier une carte dans un vrai navigateur : jsdom n'a pas WebGL, un test unitaire ne verra rien.
