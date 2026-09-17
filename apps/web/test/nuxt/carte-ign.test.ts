@@ -6,11 +6,14 @@ import CarteIgn from '~/components/CarteIgn.vue'
 // component drives MapLibre; whether the map actually draws is checked in a real browser.
 const maplibre = vi.hoisted(() => {
   const maps: { options: Record<string, unknown>, controls: unknown[], remove: () => void }[] = []
+  // MapLibre throws when the browser refuses WebGL.
+  const refuseWebgl = { value: false }
   class Map {
     options: Record<string, unknown>
     controls: unknown[] = []
     remove = vi.fn()
     constructor(options: Record<string, unknown>) {
+      if (refuseWebgl.value) throw new Error('WebGL creation failed')
       this.options = options
       maps.push(this)
     }
@@ -25,7 +28,7 @@ const maplibre = vi.hoisted(() => {
   class AttributionControl {
     constructor(public options: { compact?: boolean, customAttribution?: string }) {}
   }
-  return { maps, Map, NavigationControl, AttributionControl, setWorkerUrl: vi.fn() }
+  return { maps, refuseWebgl, Map, NavigationControl, AttributionControl, setWorkerUrl: vi.fn() }
 })
 
 vi.mock('maplibre-gl', () => maplibre)
@@ -34,6 +37,7 @@ vi.mock('maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url', () => ({ default: 
 describe('CarteIgn', () => {
   beforeEach(() => {
     maplibre.maps.length = 0
+    maplibre.refuseWebgl.value = false
   })
 
   it('opens the IGN plan on the Dévoluy, in the map region', async () => {
@@ -66,6 +70,13 @@ describe('CarteIgn', () => {
   it('accepts another center and zoom', async () => {
     await mountSuspended(CarteIgn, { props: { center: [127.98, 37.51], zoom: 12 } })
     expect(maplibre.maps[0]!.options).toMatchObject({ center: [127.98, 37.51], zoom: 12 })
+  })
+
+  it('says so without breaking the page when the browser refuses WebGL', async () => {
+    maplibre.refuseWebgl.value = true
+    const wrapper = await mountSuspended(CarteIgn)
+    expect(wrapper.text()).toContain('La carte a besoin de WebGL')
+    expect(maplibre.maps).toHaveLength(0)
   })
 
   it('releases the map when it leaves the page', async () => {

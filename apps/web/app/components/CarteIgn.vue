@@ -17,19 +17,28 @@ const props = withDefaults(defineProps<{
 })
 
 const container = useTemplateRef<HTMLDivElement>('conteneur')
+const indisponible = ref(false)
 let map: MapLibreMap | null = null
 
 onMounted(() => {
   if (!container.value) return
-  map = new MapLibreMap({
-    container: container.value,
-    style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
-    center: props.center,
-    zoom: props.zoom,
-    attributionControl: false,
-  })
-  map.addControl(new NavigationControl({ visualizePitch: false }), 'top-right')
-  map.addControl(new AttributionControl({ compact: true, customAttribution: '© IGN – Géoplateforme' }))
+  try {
+    map = new MapLibreMap({
+      container: container.value,
+      style: 'https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json',
+      center: props.center,
+      zoom: props.zoom,
+      attributionControl: false,
+    })
+    map.addControl(new NavigationControl({ visualizePitch: false }), 'top-right')
+    map.addControl(new AttributionControl({ compact: true, customAttribution: '© IGN – Géoplateforme' }))
+  }
+  catch {
+    // MapLibre throws when WebGL is refused (disabled in the browser, blocked GPU, headless
+    // Firefox on Linux). Without this, the whole page became a Nuxt error page.
+    map = null
+    indisponible.value = true
+  }
 })
 
 onBeforeUnmount(() => {
@@ -44,12 +53,30 @@ onBeforeUnmount(() => {
     class="carte"
     role="region"
     aria-label="Carte du massif du Dévoluy"
-  />
+  >
+    <p
+      v-if="indisponible"
+      class="indisponible"
+    >
+      La carte a besoin de WebGL, que ce navigateur n'autorise pas. Le reste du site fonctionne.
+    </p>
+  </div>
 </template>
 
 <style scoped>
 .carte {
   position: absolute;
   inset: 0;
+}
+
+.indisponible {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: 16px;
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--pierre);
 }
 </style>

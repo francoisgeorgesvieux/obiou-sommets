@@ -24,6 +24,8 @@ export default defineConfig({
   projects: [
     { name: 'chrome', use: { ...devices['Desktop Chrome'] } },
     { name: 'chrome-mobile', use: { ...devices['Pixel 7'] } },
+    // No WebGL preferences here: webgl.force-enabled and gfx.webrender.software break WebGL where
+    // it worked (measured on macOS, 2026-09-18). A Firefox without WebGL skips the map tests.
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'safari', use: { ...devices['Desktop Safari'] } },
     { name: 'safari-mobile', use: { ...devices['iPhone 15'] } },
