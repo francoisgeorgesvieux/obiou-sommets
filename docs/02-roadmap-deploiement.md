@@ -67,8 +67,8 @@ téléchargement et l'import GPX admin. Décisions D1 à D8 écrites. Liste des 
 
 **Objectif** : un `git push` déploie tout seul en staging, et une sauvegarde est restaurable.
 
-- ✅ Monorepo pnpm (`apps/web`, `apps/cms`, `packages/geo`, `packages/domain`, `db/views`), lint,
-  typecheck, Vitest, `CLAUDE.md`.
+- ✅ Monorepo pnpm (`apps/web`, `apps/cms`, `packages/geo`), lint, typecheck, Vitest, `CLAUDE.md`.
+  `packages/domain` et `db/views` ne sont pas créés : reportés en phase 2, où ils servent.
 - ✅ Dépôt GitHub public, CI unique et frugale.
 - ✅ Railway (voir la [procédure](#procédure-de-déploiement-railway--obioueu) ci-dessous) :
   - projet `obiou-sommets`, environnements `staging` et `production` ;

@@ -28,6 +28,8 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
   puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`.
+- `packages/domain` et `db/views` n'existent pas encore (prévus en phase 1, reportés) : les créer
+  avec les collections.
 
 **Déjà vérifié, inutile de refaire** : le 2026-09-14, Directus en prod + staging (2FA, licence Open
 Innovation Grant), domaines HTTPS, plan IaC vide sur les deux environnements, carte IGN affichée ;
