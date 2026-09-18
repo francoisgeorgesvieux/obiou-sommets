@@ -1,14 +1,19 @@
 # Modèle de données — Obiou Sommets
 
-> Statut : **proposition à valider** (18 septembre 2026). Détaille le § 5 de
+> Statut : **validé le 18 septembre 2026**, sauf la section « Langues », ajoutée le même jour et
+> à valider (4 questions en fin de document). Détaille le § 5 de
 > l'[architecture](01-architecture-technique.md#5-modèle-de-données) avec les décisions du 18 sept.
 > (D2, D5, D7, D9) et ce que montrent les maquettes. Une fois validé, **ce document fait foi** pour
 > le détail des champs ; le snapshot Directus (`apps/cms/snapshots/`) en sera la traduction exacte.
 
 ## En bref
 
-- **12 collections**, 4 tables de liaison (plus celles que Directus crée pour les listes de
-  photos), le singleton `parametres_site` et un champ `credit` ajouté aux fichiers Directus.
+- **13 collections**, 4 tables de liaison et 10 tables de traductions (plus celles que Directus
+  crée pour les listes de photos), le singleton `parametres_site` et deux champs ajoutés aux
+  fichiers Directus (`credit`, `alt`).
+- **Deux langues** : français (source) et anglais. Les textes traduisibles vivent dans des tables
+  `…_traductions`, une ligne par langue. Ajouter le coréen plus tard, c'est ajouter une ligne, sans
+  toucher au schéma.
 - **Tout ce qui se calcule n'est jamais saisi** : distance, dénivelés, durée, effort viennent du
   GPX ; les kilomètres des étapes et des POI se déduisent de leur position sur la trace. On ne
   stocke pas deux fois la même information.
@@ -17,7 +22,8 @@
   calcul et ta correction, et c'est ta correction qui s'affiche.
 - **Le public ne voit que des vues SQL** (`public_*`), filtrées sur le contenu publié. Les GPX
   bruts, les anomalies et les signalements n'y apparaissent jamais.
-- **5 questions pour toi** en fin de document, chacune avec ma recommandation.
+- **4 questions sur les langues** en fin de document, chacune avec ma recommandation. Les 5
+  premières questions sont tranchées.
 
 ## Vue d'ensemble
 
@@ -43,19 +49,72 @@ erDiagram
 | Sujet | Règle |
 |---|---|
 | Identifiants | Entiers auto-incrémentés (défaut Directus). Les URL publiques utilisent les **slugs**, jamais les identifiants. |
-| Slugs | Minuscules, sans accent, générés depuis le nom, **uniques par collection**. Figés une fois publiés (question 3). |
+| Slugs | Minuscules, sans accent, générés depuis le nom, **uniques par collection** (et par langue pour les itinéraires et les pages). **Figés une fois publiés** (décidé le 18 sept.). |
 | Statut | `brouillon` · `en_relecture` · `publie` · `archive` sur les contenus publiables. Valeurs techniques sans accent, libellés accentués dans l'admin. `date_publication` posée à la première publication. |
 | Géométries | PostGIS, **WGS 84 (SRID 4326), en 2D**. Les altitudes vivent dans `altitude_m` et dans le `profil` ; le GPX exporté garde la trace 3D complète. Directus ne gère pas clairement la dimension Z, on ne dépend donc pas d'elle. |
 | Unités | Mètres et minutes en **entiers** (`distance_m`, `duree_…_min`). La conversion en km et en heures se fait à l'affichage. |
 | Textes longs | Markdown. |
 | Listes courtes | JSON (listes de mois, d'équipements, de points de vigilance). |
 | Traçabilité | Champs système Directus sur chaque collection de contenu : `date_created`, `date_updated`, `user_created`, `user_updated`. Ils alimentent le tableau de bord (« brouillons créés par l'IA ») et remplacent le `verifie_par` de l'architecture. |
-| Langue | Français. Les sommets coréens ont un nom local (hangeul) et une romanisation, pas de table de traduction. |
+| Langues | Français (source) et anglais : voir la section « Langues ». Les sommets coréens ont aussi un nom local (hangeul) et une romanisation. |
+
+## Langues
+
+> Ajoutée le 18 septembre 2026 à ta demande, **à valider** (questions L1 à L4).
+
+Le site existe en **français**, langue source, et en **anglais**. Le mécanisme est l'interface
+« Traductions » de Directus :
+- chaque collection concernée a une table `<collection>_traductions`, avec une ligne par langue, qui
+  porte les champs traduits 🌐 ;
+- le reste (position, altitude, calculs, relations) est commun à toutes les langues ;
+- dans l'admin, les traductions apparaissent en onglets FR | EN dans le même formulaire.
+
+**Collection `langues`** : `code` (`fr`, `en`), `nom`, `ordre`, `source` (vrai pour `fr`).
+
+**Chaque traduction a son statut**, `brouillon` ou `publie`. Un contenu apparaît dans une langue
+quand il est publié **et** que sa traduction dans cette langue l'est (question L2). La version
+française, source, suit le statut du contenu.
+
+| Collection | Champs traduits 🌐 |
+|---|---|
+| `regions` | `nom` (Alpes → Alps), `description` |
+| `sommets` | `description`, `reglementation` |
+| `itineraires` | `nom`, `slug`, `description`, `points_vigilance`, `equipement`, `reglementation` |
+| `etapes` | `titre`, `texte` |
+| `points_depart` | `nom`, `acces_routier`, `parking`, `transport_commun` |
+| `poi` | `description` |
+| `sorties` | `conditions`, `recit` |
+| `conseils` | `titre`, `texte` |
+| `pages` | `titre`, `slug`, `contenu` |
+| `parametres_site` | `bandeau_texte` |
+| fichiers | `alt`, le texte alternatif des photos, une valeur par langue |
+
+**Ce qui n'est pas traduit** :
+- les noms propres : sommets, massifs, POI (« Obiou », « Dévoluy », « Cabane du vallon ») — question L3 ;
+- les slugs des sommets et des massifs ;
+- les données chiffrées ;
+- les libellés des listes (cotation T1–T6, types, catégories) : ils se traduisent dans le code du
+  site, pas en base.
+
+**Adresses** : le français est à la racine, l'anglais sous `/en` (question L4) :
+`/sommets/obiou/voie-normale-par-le-vallon` ↔ `/en/summits/obiou/normal-route-via-the-valley`.
+Chaque page déclare ses autres versions (`hreflang`), et le sitemap liste les deux langues.
+
+**Recherche et MCP** : la recherche plein texte utilise le dictionnaire de la langue (français ou
+anglais). Les outils du MCP public prennent un paramètre `langue`, `fr` par défaut.
+
+**Traduction assistée** : l'agent IA (MCP) peut rédiger la traduction anglaise **en brouillon** ; tu
+la relis et tu la publies. C'est la règle « brouillons seulement », telle quelle.
+
+**Traduction à revoir** : quand le texte français change après la traduction, l'admin signale la
+traduction anglaise « à revoir » (source modifiée après elle). À outiller en phase 2, avec les
+autres extensions.
 
 ## Collections
 
 Légende : **Obl.** = obligatoire pour publier. 🔒 = jamais public. ⚙️ = calculé par le pipeline,
-lecture seule dans l'admin.
+lecture seule dans l'admin. 🌐 = traduit : le champ vit dans la table `…_traductions`, avec une
+valeur par langue.
 
 ### `regions` — zones et massifs
 
@@ -65,11 +124,11 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 
 | Champ | Type | Obl. | Notes |
 |---|---|---|---|
-| `nom` | texte | ✓ | « Dévoluy », « Jeju » |
+| 🌐 `nom` | texte | ✓ | zones traduites (« Alpes » → « Alps ») ; les massifs gardent leur nom propre (« Dévoluy ») dans les deux langues |
 | `slug` | texte, unique | ✓ | `/massifs/devoluy` |
 | `niveau` | choix : `zone` · `massif` | ✓ | |
 | `parent` | → `regions` | massif ✓ | la zone d'un massif |
-| `description` | markdown | | page massif |
+| 🌐 `description` | markdown | | page massif |
 | `ordre` | entier | | ordre d'affichage |
 | `emprise` | Polygon | | facultatif, pour recentrer la carte |
 
@@ -78,7 +137,7 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | Champ | Type | Obl. | Notes |
 |---|---|---|---|
 | `statut`, `date_publication` | voir conventions | ✓ | |
-| `nom` | texte | ✓ | « Obiou », « Hallasan » |
+| `nom` | texte | ✓ | « Obiou », « Hallasan » ; nom propre, non traduit |
 | `nom_local` | texte | | « 한라산 » |
 | `romanisation` | texte | | « Hallasan » (romanisation révisée) |
 | `slug` | texte, unique | ✓ | généré depuis le nom |
@@ -87,12 +146,12 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | `pays` | choix : `FR` · `CH` · `IT` · `KR` | ✓ | codes ISO |
 | `region` | → `regions` (massif) | ✓ | |
 | `fond_carte` | choix : `auto` · `ign` · `outdoor` | ✓ | `auto` par défaut : IGN en France, fond outdoor ailleurs (D9). Le fournisseur n'est pas stocké : il peut changer (MapTiler, PMTiles). |
-| `description` | markdown | ✓ | |
+| 🌐 `description` | markdown | ✓ | |
 | `photo_couverture` | fichier | | crédit obligatoire |
 | `galerie` | fichiers (liste) | | crédit obligatoire |
 | `mois_conseilles` | JSON, mois 1–12 | | |
 | `reservation_requise` | booléen | | étiquette sur la carte et la fiche (Hallasan) |
-| `reglementation` | markdown | | règles communes à tous les itinéraires |
+| 🌐 `reglementation` | markdown | | règles communes à tous les itinéraires |
 | `tags` | liste | | |
 | `sources` | markdown | | crédits et sources des informations |
 
@@ -101,19 +160,19 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | Champ | Type | Obl. | Notes |
 |---|---|---|---|
 | `statut`, `date_publication` | voir conventions | ✓ | |
-| `nom` | texte | ✓ | « Voie normale par le vallon » |
-| `slug` | texte, unique | ✓ | `/sommets/obiou/voie-normale-par-le-vallon` |
+| 🌐 `nom` | texte | ✓ | « Voie normale par le vallon » |
+| 🌐 `slug` | texte, unique par langue | ✓ | `/sommets/obiou/voie-normale-par-le-vallon`, `/en/summits/obiou/normal-route-via-the-valley` |
 | `sommets` | ↔ `sommets`, **ordonné** | ✓ | via `itineraires_sommets` ; plusieurs pour une traversée |
 | `type` | choix : `aller_retour` · `boucle` · `traversee` | ✓ | |
 | `cotation` | choix : `T1` … `T6` | ✓ | **échelle SAC (D2)**, voir plus bas |
 | `point_depart` | → `points_depart` | ✓ | |
 | `point_arrivee` | → `points_depart` | traversée ✓ | vide pour un aller-retour ou une boucle |
-| `description` | markdown | ✓ | chapeau de la fiche |
-| `points_vigilance` | JSON, liste de textes | | « Pas rocheux exposé au km 6 » |
-| `equipement` | JSON, liste de textes | | « Chaussures à tige haute », « 2 L d'eau »… |
+| 🌐 `description` | markdown | ✓ | chapeau de la fiche |
+| 🌐 `points_vigilance` | JSON, liste de textes | | « Pas rocheux exposé au km 6 » |
+| 🌐 `equipement` | JSON, liste de textes | | « Chaussures à tige haute », « 2 L d'eau »… |
 | `mois_praticables` | JSON, mois 1–12 | | |
 | `reservation_requise` | booléen | | propre à cet itinéraire |
-| `reglementation` | markdown | | ex. fermeture saisonnière d'un sentier coréen |
+| 🌐 `reglementation` | markdown | | ex. fermeture saisonnière d'un sentier coréen |
 | `duree_estimee_min` | entier | | **ta correction** de la durée ; vide = le calcul s'affiche |
 | `verifie_le` | date | | vérification sans sortie complète (un passage partiel, un échange avec la mairie…) |
 | 🔒 `gpx_source` | fichier (dossier privé) | ✓ | le GPX déposé, jamais servi tel quel |
@@ -153,8 +212,8 @@ en projetant le POI sur la trace (`ST_LineLocatePoint`). Il suit donc la trace q
 |---|---|---|---|
 | `itineraire` | → `itineraires` | ✓ | |
 | `ordre` | entier | ✓ | glisser-déposer dans l'admin |
-| `titre` | texte | ✓ | « Cabane → source du vallon » |
-| `texte` | markdown | | |
+| 🌐 `titre` | texte | ✓ | « Cabane → source du vallon » |
+| 🌐 `texte` | markdown | | |
 | `position_fin` | Point | | fin de l'étape ; donne les km et altitudes affichés (« km 2,8 – 3,4 · 1 640 → 1 790 m »), calculés par la vue |
 | `photo` | fichier | | crédit obligatoire |
 
@@ -162,13 +221,13 @@ en projetant le POI sur la trace (`ST_LineLocatePoint`). Il suit donc la trace q
 
 | Champ | Type | Obl. | Notes |
 |---|---|---|---|
-| `nom` | texte | ✓ | « Parking du vallon » |
+| 🌐 `nom` | texte | ✓ | « Parking du vallon » |
 | `position` | Point | ✓ | |
 | `altitude_m` | entier | | suggérée depuis le modèle de terrain |
 | `commune` | texte | | commune du point de départ |
-| `acces_routier` | markdown | | |
-| `parking` | markdown | | capacité, payant ou non |
-| `transport_commun` | markdown | | « Bus jusqu'au village, puis 3 km à pied » ; s'il est rempli, l'itinéraire compte comme accessible en transport en commun (filtre de recherche et MCP) |
+| 🌐 `acces_routier` | markdown | | |
+| 🌐 `parking` | markdown | | capacité, payant ou non |
+| 🌐 `transport_commun` | markdown | | « Bus jusqu'au village, puis 3 km à pied » ; s'il est rempli, l'itinéraire compte comme accessible en transport en commun (filtre de recherche et MCP) |
 
 Pas de statut : un point de départ devient public quand un itinéraire publié l'utilise.
 
@@ -180,7 +239,7 @@ Pas de statut : un point de départ devient public quand un itinéraire publié 
 | `nom` | texte | ✓ | « Cabane du vallon » |
 | `position` | Point | ✓ | |
 | `altitude_m` | entier | | |
-| `description` | texte court | | « Non gardée, 6 places », « À traiter » |
+| 🌐 `description` | texte court | | « Non gardée, 6 places », « À traiter » |
 | `lien` | URL | | |
 
 Pas de statut non plus : un POI devient public par un itinéraire publié.
@@ -193,8 +252,8 @@ Pas de statut non plus : un POI devient public par un itinéraire publié.
 | `date` | date | ✓ | pré-remplie depuis le GPX brut |
 | `heure_depart` | heure | | pré-remplie depuis le GPX brut |
 | `duree_marche_min` | entier | | pré-remplie depuis le GPX brut |
-| `conditions` | texte court | | « Ciel dégagé », « Neige au-dessus de 2 400 m » |
-| `recit` | markdown | | court |
+| 🌐 `conditions` | texte court | | « Ciel dégagé », « Neige au-dessus de 2 400 m » |
+| 🌐 `recit` | markdown | | court |
 | `photos` | fichiers (liste) | | crédit obligatoire |
 | `publique` | booléen, oui par défaut | | voir question 1 |
 | 🔒 `gpx_brut` | fichier (dossier privé) | | la trace de ce jour-là, avec ses horodatages ; jamais publiée |
@@ -211,8 +270,8 @@ ce qui est publié (invariant « aucune métadonnée personnelle dans un GPX pub
 | Champ | Type | Obl. | Notes |
 |---|---|---|---|
 | `statut` | voir conventions | ✓ | |
-| `titre` | texte | ✓ | « Partir avant 7 h » |
-| `texte` | markdown | ✓ | |
+| 🌐 `titre` | texte | ✓ | « Partir avant 7 h » |
+| 🌐 `texte` | markdown | ✓ | |
 | `categorie` | choix : `securite` · `logistique` · `saison` · `faune_flore` · `photo` | ✓ | |
 | `global` | booléen | | affiché partout (guides) |
 | `sommets`, `itineraires` | ↔ | | rattachements, via les tables de liaison |
@@ -249,18 +308,21 @@ IP ni identifiant.**
 
 ### `pages`
 
-`statut` · `slug` · `titre` · `type` (`a_propos` · `guide` · `legal`) · `contenu` (markdown) · `ordre`.
+`statut` · 🌐 `slug` · 🌐 `titre` · `type` (`a_propos` · `guide` · `legal`) · 🌐 `contenu` (markdown) ·
+`ordre`.
 Les guides (`/guides/importer-une-trace`, `/guides/cotations`…) sont des pages de type `guide`.
 
 ### `parametres_site` — singleton
 
-`bandeau_actif` (booléen) · `bandeau_texte` · `bandeau_niveau` (`info` · `alerte`) ·
+`bandeau_actif` (booléen) · 🌐 `bandeau_texte` · `bandeau_niveau` (`info` · `alerte`) ·
 `zone_par_defaut` (→ `regions`, zone ouverte à l'arrivée sur la carte).
 
-### Fichiers : champ `credit` sur `directus_files`
+### Fichiers : champs `credit` et `alt` sur `directus_files`
 
 Chaque photo porte un **crédit** (« © l'auteur ») ; la maquette bloque l'enregistrement tant qu'une
-photo n'en a pas. Trois dossiers : `gpx-prives` 🔒 (GPX sources et bruts), `exports`, `photos`.
+photo n'en a pas. Elle porte aussi un **texte alternatif par langue** (`alt`, au format
+`{ "fr": …, "en": … }`), indispensable à l'accessibilité. Directus ne sait pas traduire les
+fichiers, d'où ce champ unique. Trois dossiers : `gpx-prives` 🔒 (GPX sources et bruts), `exports`, `photos`.
 
 ## Qui écrit quoi
 
@@ -270,8 +332,8 @@ photo n'en a pas. Trois dossiers : `gpx-prives` 🔒 (GPX sources et bruts), `ex
 |---|---|---|---|---|
 | Administrateur | tout | ✓ | ✓ | ✓ (2FA obligatoire) |
 | Éditeur | tout le contenu | ✓ | ✓ | — |
-| Contributeur (question 4) | brouillons | — | — | — |
-| **Agent IA** (MCP) | lit tout sauf les GPX bruts ; crée et modifie **seulement si le statut est `brouillon` ou `en_relecture`** | — | — | — |
+| Contributeur (créé dès maintenant) | brouillons | — | — | — |
+| **Agent IA** (MCP) | lit tout sauf les GPX bruts ; crée et modifie **seulement si le statut est `brouillon` ou `en_relecture`** ; rédige les traductions en brouillon | — | — | — |
 
 Pour l'Agent IA, la règle s'étend aux collections sans statut. Il peut modifier les étapes et les
 liaisons d'un itinéraire en brouillon, **pas** celles d'un itinéraire publié : sinon, une
@@ -291,7 +353,8 @@ Le site ne passe pas par Directus. Il a **deux rôles Postgres**, les plus étro
 ## Ce qui est public : les vues SQL
 
 Filtrées sur `statut = 'publie'`. Un itinéraire n'apparaît que si au moins un de ses sommets est
-publié.
+publié. Chaque vue porte une colonne **`langue`** : une ligne par contenu et par langue publiée. Le
+site et le MCP public filtrent sur la langue demandée.
 
 | Vue | Contenu |
 |---|---|
@@ -339,31 +402,32 @@ publique du 17 août 2025, départ 6 h 10.
 (automatique). `reservation_requise` sur le sommet. Deux itinéraires, Seongpanak et Gwaneumsa, avec
 leurs règles propres dans `reglementation` (heures limites de passage).
 
-## Questions pour toi
+## Décisions du 18 septembre
 
-1. **Sorties publiques ?** La maquette affiche « Ma sortie du 17 août 2025 · départ 6 h 10 ·
-   6 h 50 de marche · ciel dégagé ». **Recommandation** : oui, c'est l'âme d'un carnet, et l'heure
-   de départ est un vrai conseil pour le lecteur. Avec une case `publique` par sortie pour garder
-   une sortie pour toi.
-2. **Effort calculé (D2)** : le **kilomètre-effort** (distance en km + D+ en m / 100), mesure
-   courante en France et en Suisse. 13,8 km et 1 520 m D+ donnent 29 km-effort. **Recommandation** :
-   l'afficher à côté de la cotation. Celle-ci dit la difficulté technique, le km-effort la
-   fatigue.
-3. **Slug figé à la publication ?** Renommer un sommet publié casserait les liens et le
-   référencement. **Recommandation** : slug verrouillé une fois publié ; une table de redirections
-   plus tard, si le besoin apparaît.
-4. **Rôle Contributeur maintenant ?** **Recommandation** : non. Administrateur, Éditeur et Agent IA
-   suffisent tant que tu es seul. On l'ajoutera le jour où un proche contribuera.
-5. **Deux niveaux zone › massif** (Alpes › Dévoluy, Corée du Sud › Jeju), comme dans les
-   maquettes ? **Recommandation** : oui. Le pays reste porté par le sommet : les Alpes en
-   traversent trois.
+1. **Sorties publiques** : oui, avec une case `publique` par sortie pour en garder pour toi.
+2. **Kilomètre-effort** affiché à côté de la cotation : oui.
+3. **Slug verrouillé** une fois publié : oui ; une table de redirections plus tard si besoin.
+4. **Rôle Contributeur** : créé dès maintenant.
+5. **Deux niveaux zone › massif** : oui ; le pays reste porté par le sommet.
+
+## Questions sur les langues
+
+- **L1. Français comme source, anglais, et coréen plus tard sans changer le schéma ?**
+  **Recommandation** : oui.
+- **L2. Un contenu n'apparaît en anglais que si sa traduction est publiée ?** Sinon, le sélecteur
+  de langue renvoie vers la version française. **Recommandation** : oui. Une page anglaise à moitié
+  en français gêne la lecture et le référencement. Le site anglais sera plus petit au début.
+- **L3. Noms propres non traduits** (sommets, massifs, POI), mais noms d'itinéraires et de points
+  de départ traduits (« Voie normale par le vallon » → « Normal route via the valley ») ?
+  **Recommandation** : oui. Ce sont les noms qu'on lit sur le terrain et sur les cartes.
+- **L4. Adresses anglaises sous `/en`**, slugs de sommets communs aux deux langues, slugs
+  d'itinéraires traduits ? **Recommandation** : oui.
 
 ## Ce qui vient ensuite
 
-1. Tu valides le modèle (ou tu l'ajustes), et tu réponds aux 5 questions.
-2. Création des collections dans **Directus staging**, puis `directus schema snapshot` vers
-   `apps/cms/snapshots/schema.yaml`. Je te proposerai la méthode : à la main dans l'admin staging,
-   ou snapshot écrit puis appliqué au déploiement.
+1. Tu réponds aux 4 questions sur les langues.
+2. Création des collections **à la main dans l'admin Directus staging** (choix du 18 sept.), puis
+   `directus schema snapshot` vers `apps/cms/snapshots/schema.yaml`.
 3. `packages/domain` : types et schémas Zod des vues publiques, partagés par le site et le MCP.
 4. `db/views` : les vues `public_*`, les deux rôles Postgres et leurs fonctions, avec le test de
    contrat.

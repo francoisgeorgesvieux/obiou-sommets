@@ -22,10 +22,10 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
 ## ▶ Prochaine session : reprendre ici
 
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
-- **Modèle de données rédigé le 2026-09-18, en attente de validation** :
-  [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), avec 5 questions au propriétaire en
-  fin de document. Une fois validé, il fait foi ; créer alors les collections dans Directus
-  **staging**, puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
+- **Modèle de données validé le 2026-09-18**, sauf la section « Langues » (questions L1 à L4) :
+  [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi. Ensuite : créer les
+  collections **à la main dans l'admin Directus staging** (choix du propriétaire), puis
+  `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
@@ -49,11 +49,14 @@ jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser s
   v1.1 (D5) ; **pas de compte utilisateur** au lancement, favoris dans le navigateur (D7) ; hors de
   France, **MapTiler gratuit** avec repli OpenTopoMap, PMTiles si le quota ne suffit plus (D9).
   Dépôt **public** (D6).
-- **Encore ouvert** : D4, SCAN 25 en fond public. ⚠️ Vérifié le 2026-09-18 sur la licence IGN :
-  une clé personnelle **ne suffit pas**, un site public relève de la licence « Usage Numérique Grand
-  Public » (contrat avec l'IGN, relevé trimestriel, pénalité de 40 €/jour de retard, pas de cache).
-  Le propriétaire suit [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md) en parallèle.
-  Recommandation : lancer sans, sur Plan IGN.
+- **D4 décidée (2026-09-18) : sans SCAN 25 pour le moment**, sur Plan IGN. Vérifié sur la licence
+  IGN : une clé personnelle **ne suffit pas**, un site public relève de la licence « Usage Numérique
+  Grand Public » (contrat avec l'IGN, relevé trimestriel, pénalité de 40 €/jour de retard, pas de
+  cache). Une entreprise n'y change rien à elle seule, et un rattachement à une activité monétisée
+  menacerait les offres gratuites non commerciales (MapTiler, Open-Meteo). Démarche prête :
+  [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md).
+- **Langues (2026-09-18)** : le propriétaire veut le site **aussi en anglais**. Le modèle de données
+  le prévoit (tables `…_traductions`) ; questions L1 à L4 en attente de réponse.
 - **Maquettes** publiées (45 écrans, lots 1 à 4) : https://claude.ai/code/artifact/bb79abd1-e08c-4cf9-834a-017c95d230ec.
   Les artboards sources sont dans `design/*.dc.html`. Si le canvas a été modifié en ligne, la
   version en ligne fait foi : la relire avant de régénérer. Données et fonds de carte fictifs.

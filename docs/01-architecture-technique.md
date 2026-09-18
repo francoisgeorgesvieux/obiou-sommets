@@ -445,7 +445,7 @@ obiou-sommets/
 | D1 | Nom du projet et sous-domaine | ✅ **Décidé** : `sommets.obiou.eu` |
 | D2 | Échelle de cotation | ✅ **Décidé (18 sept. 2026)** : échelle **SAC T1–T6** (standard alpin, utilisée par Camptocamp, applicable aussi en Corée), complétée par l'effort calculé |
 | D3 | Périmètre géographique | ✅ **Décidé** : sorties personnelles, Alpes + Corée du Sud |
-| D4 | SCAN 25 en fond public | **Ouvert.** Demande une licence grand public signée et 4 relevés par an ([démarche](06-scan25-pas-a-pas.md)). Recommandation du 18 sept. 2026 : lancer sans, avec Plan IGN (et Plan IGN HD s'il passe en licence ouverte) |
+| D4 | SCAN 25 en fond public | ✅ **Décidé (18 sept. 2026)** : **sans SCAN 25 pour le moment**, sur Plan IGN (et Plan IGN HD s'il passe en licence ouverte). Il faudrait une licence grand public signée et 4 relevés par an ([démarche prête](06-scan25-pas-a-pas.md)) |
 | D5 | Export FIT au lancement | ✅ **Décidé (18 sept. 2026)** : au lancement si les tests sur 3 montres réelles passent, sinon en v1.1 |
 | D6 | Dépôt public ou privé | ✅ **Décidé** : **public** (minutes Actions, protection de branche, crédibilité) |
 | D7 | Comptes utilisateurs | ✅ **Décidé (18 sept. 2026)** : pas de compte au lancement ; favoris stockés dans le navigateur ; comptes si la demande apparaît |

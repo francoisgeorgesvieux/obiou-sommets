@@ -46,10 +46,9 @@ On ouvre juste avant que les recherches « randonnée + sommet » remontent.
 - ✅ Décidés le 18 sept. : cotation SAC T1–T6 (D2), FIT au lancement s'il passe les tests sur 3
   montres (D5), dépôt public (D6), pas de compte au lancement (D7), MapTiler gratuit et OpenTopoMap
   hors de France (D9). Voir l'[architecture](01-architecture-technique.md#14-décisions-ouvertes).
-  Reste D4 : SCAN 25 en fond public, qui demande une licence grand public signée
-  ([marche à suivre](06-scan25-pas-a-pas.md)).
-- Juridique : décider de D4 et, si oui, suivre la marche à suivre SCAN 25 ; rédiger l'avertissement
-  (« récit de sortie, pas un topo officiel »).
+  D4 aussi : sans SCAN 25 pour le moment, il demanderait une licence grand public signée
+  ([marche à suivre prête](06-scan25-pas-a-pas.md)).
+- Juridique : rédiger l'avertissement (« récit de sortie, pas un topo officiel »).
 - **Inventaire de tes traces** : exporter l'historique de ta montre ou de ton appli (Garmin Connect,
   Strava…), repérer les sorties avec sommet, choisir **15 sommets pilotes** mêlant Alpes et Corée.
 - ✅ Maquettes générées pour tous les écrans (45 artboards, lien dans le README). Reste à itérer

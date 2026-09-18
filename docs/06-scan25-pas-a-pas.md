@@ -44,8 +44,25 @@ décider si ça vaut le coup.
 n'engager la démarche que si le SCAN 25 compte vraiment pour toi. Dans ce cas, commence tôt : les
 demandes sont traitées à la main par l'IGN.
 
-- [ ] **Décision prise** : SCAN 25 oui, ou non. Si c'est non, reporte-le simplement dans le § 14 de
-  l'architecture et arrête-toi ici.
+- [x] **Décidé le 18 sept. 2026 : sans SCAN 25 pour le moment.** Les étapes suivantes restent
+  prêtes pour le jour où la question se reposera.
+
+## Et avec une entreprise ?
+
+Question posée le 18 sept. 2026 : ouvrir une entreprise, qui porterait ce site avec un projet
+monétisé, permettrait-elle d'obtenir la licence ? **Non, pas à elle seule** :
+
+- **Le SIRET ouvre la licence gratuite « usage final professionnel ou associatif »**, et celle-ci
+  exclut expressément l'« Usage Numérique Grand Public ». Un site ouvert au public reste du grand
+  public, qu'il soit publié par un particulier ou par une société. Il faudrait **la même licence
+  grand public**, avec **les mêmes relevés trimestriels**.
+- **Ce que l'entreprise pourrait changer** : la capacité à signer, si l'IGN refuse de contracter
+  avec un particulier. L'étape 1 (un message, gratuit) répond à cette question.
+- **Le risque inverse** : plusieurs services sont gratuits **parce que** le site est non
+  commercial. C'est le cas de l'offre gratuite de MapTiler (D9) et d'Open-Meteo. Rattacher le site
+  à une activité monétisée pourrait les rendre payants : relire leurs conditions avant.
+
+L'entreprise se décide donc sur l'intérêt du projet monétisé, pas pour le SCAN 25.
 
 ## Étape 1 — Écrire à l'IGN pour lever les inconnues
 
