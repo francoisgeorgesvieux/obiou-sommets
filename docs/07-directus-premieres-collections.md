@@ -23,6 +23,11 @@ Four words to know:
 | interface | the input widget of a field | dropdown, map, Markdown editor |
 | item | row | the region "Dévoluy" |
 
+**Finding your way**: the vertical bar on the far left holds the modules. The first icon, a cube, is
+**Content** (its name only shows on hover), where you enter items; the gear at the bottom is
+**Settings**, where the Data Model lives. A collection's items are also one address away:
+`/admin/content/<collection>`, even when Directus hides that collection from the menu.
+
 ## Step 1 — Create the `regions` collection
 
 1. **Settings** (the gear icon, bottom left) → **Data Model** → the **+** button (Create
@@ -76,7 +81,9 @@ a column holding the `id` of another region.
 
    Two collections appear. `regions_translations` is a junction table, which Directus often hides:
    if you don't see it in the list, look for the option that shows hidden collections.
-2. In **Content → Languages**, keep only **French** (`fr`) and **English** (`en`). Delete the
+2. In **Content → Languages** (direct address:
+   https://cms-staging-5f20.up.railway.app/admin/content/languages), keep only **French** (`fr`)
+   and **English** (`en`). Delete the
    others if Directus created any, and add these two if they are missing. **No Korean yet**: it will
    come later, as a single new row.
 3. In **Data Model → regions_translations**, create the translated fields:
@@ -98,7 +105,8 @@ FR | EN tabs.
 
 ## Step 4 — Enter the four regions
 
-**Content → Regions → +**, then fill in both the FR and EN tabs of the Translations field:
+**Content → Regions → +** (https://cms-staging-5f20.up.railway.app/admin/content/regions), then fill
+in both the FR and EN tabs of the Translations field:
 
 | `slug` | `niveau` | `parent` | Name (FR) | Name (EN) |
 |---|---|---|---|---|
