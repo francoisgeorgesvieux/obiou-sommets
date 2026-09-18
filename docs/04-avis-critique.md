@@ -12,7 +12,7 @@ les Alpes et en Corée du Sud**. Ça change sensiblement l'analyse :
 | 2. Concurrence (Camptocamp, Visorando…) | **Presque hors sujet.** Un carnet personnel n'a pas à battre ces plateformes. Sa valeur, c'est ta voix, tes photos et le mélange Alpes et Corée, rare en français. |
 | 1. Volume de contenu | **Allégé.** Les traces et les photos existent déjà ; il reste surtout la rédaction. Publier au fil de l'eau suffit, sans objectif de nombre. |
 | 4. Droits sur les données | **Réglé** pour les traces et les photos, puisque ce sont les tiennes. Reste l'attribution des fonds de carte. |
-| SCAN 25 payant | **Levé** : usage non commercial, avec clé personnelle. |
+| SCAN 25 payant | **Pas levé** (corrigé le 18 sept. 2026) : un site public relève de la licence grand public de l'IGN, probablement gratuite à ce volume mais avec un relevé chaque trimestre. Voir [06-scan25-pas-a-pas.md](06-scan25-pas-a-pas.md). |
 | 9. Charge de travail | **Encore plus d'arguments** pour un processus léger : c'est un loisir. |
 
 Nouveaux points d'attention :
@@ -106,8 +106,9 @@ passage équipé retiré, sentier fermé) et qu'un accident arrive, la question 
   generis*). Reprendre les GPX de Visorando ou les textes de Camptocamp (CC BY-SA, qui impose
   attribution et partage à l'identique) n'est pas neutre. **Uniquement tes propres traces**, ou avec
   une licence compatible et une attribution.
-- **Fonds IGN SCAN 25** : clé personnelle, et payant pour une offre commerciale grand public. Le
-  Plan IGN et les photos aériennes restent libres.
+- **Fonds IGN SCAN 25** : une licence « Usage Numérique Grand Public » signée avec l'IGN, même
+  pour un site gratuit (corrigé le 18 sept. 2026, voir [06-scan25-pas-a-pas.md](06-scan25-pas-a-pas.md)).
+  Le Plan IGN et les photos aériennes restent libres.
 - **OpenStreetMap** (si utilisé) : licence ODbL, attribution et partage à l'identique des données
   dérivées.
 - **Photos** : crédit et licence pour chacune.

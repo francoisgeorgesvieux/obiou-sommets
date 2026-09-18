@@ -22,8 +22,10 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
 ## ▶ Prochaine session : reprendre ici
 
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
-- Modéliser les collections dans Directus **staging** (sommets, itinéraires, sorties, régions…),
-  puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
+- **Modèle de données rédigé le 2026-09-18, en attente de validation** :
+  [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), avec 5 questions au propriétaire en
+  fin de document. Une fois validé, il fait foi ; créer alors les collections dans Directus
+  **staging**, puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
@@ -47,8 +49,11 @@ jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser s
   v1.1 (D5) ; **pas de compte utilisateur** au lancement, favoris dans le navigateur (D7) ; hors de
   France, **MapTiler gratuit** avec repli OpenTopoMap, PMTiles si le quota ne suffit plus (D9).
   Dépôt **public** (D6).
-- **Encore ouvert** : D4, SCAN 25 en fond public (clé personnelle, CGU à relire) de
-  [l'architecture](docs/01-architecture-technique.md#14-décisions-ouvertes).
+- **Encore ouvert** : D4, SCAN 25 en fond public. ⚠️ Vérifié le 2026-09-18 sur la licence IGN :
+  une clé personnelle **ne suffit pas**, un site public relève de la licence « Usage Numérique Grand
+  Public » (contrat avec l'IGN, relevé trimestriel, pénalité de 40 €/jour de retard, pas de cache).
+  Le propriétaire suit [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md) en parallèle.
+  Recommandation : lancer sans, sur Plan IGN.
 - **Maquettes** publiées (45 écrans, lots 1 à 4) : https://claude.ai/code/artifact/bb79abd1-e08c-4cf9-834a-017c95d230ec.
   Les artboards sources sont dans `design/*.dc.html`. Si le canvas a été modifié en ligne, la
   version en ligne fait foi : la relire avant de régénérer. Données et fonds de carte fictifs.
@@ -222,3 +227,5 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
 - [docs/02-roadmap-deploiement.md](docs/02-roadmap-deploiement.md)
 - [docs/03-prompt-claude-design.md](docs/03-prompt-claude-design.md)
 - [docs/04-avis-critique.md](docs/04-avis-critique.md)
+- [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md)
+- [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md)

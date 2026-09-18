@@ -83,7 +83,7 @@ Ce découpage apporte trois choses :
 | Admin no-code | **Directus 12** | Admin généré depuis le schéma, **champs géographiques natifs (PostGIS) avec interface carte**, stockage S3, rôles et permissions fins, révisions, Flows (automatisations sans code), **serveur MCP intégré** (OAuth ou jeton statique, hérite des permissions). Extensions en Vue, donc dans tes compétences. | **Payload 3** : excellent (MIT, schéma en code, plugin MCP officiel), mais Next/React et MCP par clé API uniquement. Admin maison : des mois de travail pour refaire un CMS. |
 | Base de données | **PostgreSQL + PostGIS** | Géométries (points, traces), index spatiaux, recherche plein texte avec `unaccent`. | Base NoSQL ou fichiers GeoJSON (pas de requêtes spatiales) |
 | Carte | **MapLibre GL JS** | Libre (BSD), tuiles vectorielles, clustering natif, terrain 3D possible. | Leaflet (raster uniquement, moins fluide), Mapbox (licence et coûts) |
-| Fonds de carte | **IGN Géoplateforme** en France, **fond « outdoor » OpenStreetMap** ailleurs | Plan IGN et photos aériennes **sans clé**. SCAN 25 sur **clé personnelle**, possible pour un site non commercial (§ 7). Hors de France (Suisse, Italie, Corée), un style outdoor basé sur OSM, avec courbes de niveau et relief. | Google/Mapbox (coût), IGN seul (s'arrête à la frontière) |
+| Fonds de carte | **IGN Géoplateforme** en France, **fond « outdoor » OpenStreetMap** ailleurs | Plan IGN et photos aériennes **sans clé**. SCAN 25 : **licence grand public à signer** avec l'IGN, même pour un site non commercial (§ 7, D4). Hors de France (Suisse, Italie, Corée), un style outdoor basé sur OSM, avec courbes de niveau et relief. | Google/Mapbox (coût), IGN seul (s'arrête à la frontière) |
 | MCP public | **@nuxtjs/mcp-toolkit** dans l'app Nuxt | Module Nuxt officiel basé sur le SDK MCP : outils déclarés par fichier, validation Zod. Pas de service en plus. | Service MCP séparé (un service de plus à opérer) |
 | MCP admin | **MCP intégré de Directus** | Gratuit, gouverné par les permissions Directus, journal d'audit, suppression désactivée par défaut. | MCP admin maison (réécrire les permissions) |
 | Traitement GPX | **Package TS pur `packages/geo`** | Testable sans framework, réutilisé par le hook Directus et par le MCP. | Traitement dans le navigateur (non fiable) |
@@ -113,6 +113,9 @@ lecture publique via vues SQL (§ 2) limite le risque de dépendance.
 avec l'application financière.
 
 ## 5. Modèle de données
+
+> Vue d'ensemble. Le détail champ par champ, avec les décisions du 18 sept. 2026, est dans
+> [05-modele-de-donnees.md](05-modele-de-donnees.md), qui fait foi une fois validé.
 
 ```mermaid
 erDiagram
@@ -233,10 +236,11 @@ Points d'attention :
 - **Fonds en France** :
   - *Plan IGN* (tuiles vectorielles Géoplateforme, sans clé) : fond par défaut.
   - *Photographies aériennes* (sans clé).
-  - *Carte IGN SCAN 25* : nécessite une **clé personnelle**. Le site étant non commercial et sans
-    publicité, il ne relève pas de l'« offre commerciale grand public » payante
-    ([conditions](https://geoservices.ign.fr/services-web-issus-des-scans-ign)). Relire les CGU au
-    moment de demander la clé.
+  - *Carte IGN SCAN 25* : **corrigé le 18 sept. 2026**, l'hypothèse d'une simple clé personnelle
+    était fausse. Un site public, même non commercial, relève de la **Licence Usage Numérique Grand
+    Public**, signée avec les unités commerciales de l'IGN, avec un relevé de consommation chaque
+    trimestre (pénalité de 40 € par jour de retard) et sans mise en cache des tuiles. Démarche et
+    alternatives : [06-scan25-pas-a-pas.md](06-scan25-pas-a-pas.md).
   - Ombrage du relief en surcouche.
 - **Fonds hors de France** (Alpes suisses et italiennes, Corée du Sud) : style « outdoor » basé sur
   OpenStreetMap, avec courbes et relief. Options, de la plus simple à la plus robuste :
@@ -441,7 +445,7 @@ obiou-sommets/
 | D1 | Nom du projet et sous-domaine | ✅ **Décidé** : `sommets.obiou.eu` |
 | D2 | Échelle de cotation | ✅ **Décidé (18 sept. 2026)** : échelle **SAC T1–T6** (standard alpin, utilisée par Camptocamp, applicable aussi en Corée), complétée par l'effort calculé |
 | D3 | Périmètre géographique | ✅ **Décidé** : sorties personnelles, Alpes + Corée du Sud |
-| D4 | SCAN 25 en fond public | Oui, usage non commercial, avec clé personnelle et relecture des CGU |
+| D4 | SCAN 25 en fond public | **Ouvert.** Demande une licence grand public signée et 4 relevés par an ([démarche](06-scan25-pas-a-pas.md)). Recommandation du 18 sept. 2026 : lancer sans, avec Plan IGN (et Plan IGN HD s'il passe en licence ouverte) |
 | D5 | Export FIT au lancement | ✅ **Décidé (18 sept. 2026)** : au lancement si les tests sur 3 montres réelles passent, sinon en v1.1 |
 | D6 | Dépôt public ou privé | ✅ **Décidé** : **public** (minutes Actions, protection de branche, crédibilité) |
 | D7 | Comptes utilisateurs | ✅ **Décidé (18 sept. 2026)** : pas de compte au lancement ; favoris stockés dans le navigateur ; comptes si la demande apparaît |
