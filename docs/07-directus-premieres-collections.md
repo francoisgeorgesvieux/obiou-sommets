@@ -1,123 +1,129 @@
-# Directus : tes premières collections
+# Directus: your first collections
 
-> Préparé le 18 septembre 2026. Tu crées `regions` et les langues toi-même, pour voir comment
-> Directus fonctionne ; je prends ensuite la main pour les autres collections. Environ 30 à 45 min.
-> Référence des champs : [05-modele-de-donnees.md](05-modele-de-donnees.md).
+> Written on 18 September 2026, in English to match the Directus interface. You create `regions` and
+> the languages yourself, to see how Directus works; then I take over for the other collections.
+> About 30 to 45 minutes. Field reference: [05-modele-de-donnees.md](05-modele-de-donnees.md) (in
+> French).
 
-## Avant de commencer
+## Before you start
 
-- **Uniquement en staging** : https://cms-staging-5f20.up.railway.app. Le schéma ne se modifie
-  jamais en production ; il y sera appliqué plus tard depuis le snapshot. Le staging se met en
-  veille : le premier chargement peut prendre une demi-minute.
-- **Les libellés ci-dessous viennent de la documentation de Directus**, en anglais, avec le français
-  entre parenthèses. L'interface de la version 12 peut différer un peu. En cas de doute, ouvre
-  l'admin dans le navigateur de l'app Claude : je vois alors la même page que toi et je te guide.
-  Tu te connectes toi-même, je ne saisis jamais ton mot de passe.
+- **Staging only**: https://cms-staging-5f20.up.railway.app. The schema is never edited in
+  production; it gets applied there later, from the snapshot. Staging goes to sleep when idle, so
+  the first load can take half a minute.
+- **The labels below come from the Directus documentation** and from your screen. If something
+  looks different, open the admin in the Claude app's browser: I then see the same page as you and
+  can guide you. You log in yourself; I never type your password.
 
-Quatre mots à connaître :
+Four words to know:
 
-| Directus | Base de données | Exemple |
+| Directus | Database | Example |
 |---|---|---|
 | collection | table | `regions` |
-| champ (*field*) | colonne | `slug` |
-| interface | le widget de saisie d'un champ | liste déroulante, carte, éditeur Markdown |
-| élément (*item*) | ligne | la région « Dévoluy » |
+| field | column | `slug` |
+| interface | the input widget of a field | dropdown, map, Markdown editor |
+| item | row | the region "Dévoluy" |
 
-## Étape 1 — Créer la collection `regions`
+## Step 1 — Create the `regions` collection
 
-1. **Settings** (Paramètres, la roue crantée en bas à gauche) → **Data Model** (Modèle de données)
-   → le bouton **+** (Create Collection).
-2. Nom : `regions`. Clé primaire : **entier auto-incrémenté** (le choix par défaut), nommée `id`.
-3. À l'écran des champs optionnels, coche :
-   - **Sort** : l'ordre d'affichage, par glisser-déposer ;
-   - **Date Created**, **Date Updated**, **User Created**, **User Updated** : qui a fait quoi, et
-     quand.
+1. **Settings** (the gear icon, bottom left) → **Data Model** → the **+** button (Create
+   Collection).
+2. Name: `regions`. Primary key: **auto-incremented integer** (the default), named `id`.
+3. On the optional fields screen, tick:
+   - **Sort**: the display order, by drag and drop;
+   - **Date Created**, **Date Updated**, **User Created**, **User Updated**: who did what, and
+     when.
 
-   **Ne coche pas Status** : les régions n'ont pas de statut de publication.
-4. Valide.
+   **Do not tick Status**: regions have no publication status.
+4. Confirm.
 
-*Ce qui vient de se passer* : Directus a créé une table `regions` dans Postgres, avec ces colonnes.
-Tu la retrouves dans **Content** (Contenu), vide pour l'instant.
+*What just happened*: Directus created a `regions` table in Postgres, with these columns. You can
+find it, still empty, under **Content**.
 
-- [ ] Collection `regions` créée
+- [ ] `regions` collection created
 
-## Étape 2 — Les champs communs à toutes les langues
+## Step 2 — The fields shared by all languages
 
-Dans **Data Model → regions**, bouton **Create Field** (Créer un champ), pour chacun :
+In **Data Model → regions**, click **Create Field** for each of these:
 
-1. **`slug`** : type **Input** (Saisie).
-   - Dans les options de l'interface, active **Slug** : Directus met la saisie en forme (minuscules,
-     tirets, sans accent).
-   - Coche **Required** (obligatoire) et **Unique** : deux régions ne peuvent pas avoir la même
-     adresse.
-2. **`niveau`** : type **Dropdown** (Liste déroulante), obligatoire. Deux choix :
-   - libellé « Zone », valeur `zone` ;
-   - libellé « Massif », valeur `massif`.
-3. **`parent`** : type **Many to One** (Plusieurs à un). Collection liée : **`regions`**, elle-même.
-   Modèle d'affichage : `{{slug}}`. C'est ce champ qui dira qu'un massif appartient à une zone.
-4. **`emprise`**, facultatif : type **Map** (Carte), géométrie **Polygon**. Tu peux le sauter.
+1. **`slug`**: **Input** interface.
+   - In the interface options, turn on **Slug**: Directus formats what you type (lowercase,
+     hyphens, no accents).
+   - Tick **Required** ("Require value to be set on creation") and **Unique**: two regions cannot
+     share the same address.
+2. **`niveau`**: **Dropdown** interface, required. Two choices:
+   - text "Zone", value `zone`;
+   - text "Massif", value `massif`.
+3. **`parent`**: **Many to One** interface. Related Collection: **`regions`**, the collection
+   itself. Display Template: `{{slug}}`. This is the field that says which zone a massif belongs
+   to.
 
-*Ce qui vient de se passer* : `parent` est une **relation** de `regions` vers `regions`. En base,
-c'est une colonne qui contient l'`id` d'une autre région.
+   ⚠️ **Many to One, not One to Many.** If the screen shows the type "Alias", a "Foreign Key"
+   picker and a "List" layout, you are on One to Many: cancel and start again. With Many to One,
+   you only pick the related collection: Directus uses its primary key `id` by itself, and the field
+   becomes an integer.
+4. **`emprise`**, optional: **Map** interface, **Polygon** geometry. You can skip it.
 
-- [ ] Champs `slug`, `niveau` et `parent` créés
+*What just happened*: `parent` is a **relation** from `regions` to `regions`. In the database, it is
+a column holding the `id` of another region.
 
-## Étape 3 — Les langues et les champs traduits
+- [ ] Fields `slug`, `niveau` and `parent` created
 
-1. Dans `regions`, crée un champ de type **Translations** (Traductions), clé `traductions`.
-   - Directus propose de créer la collection des langues : accepte **`languages`**.
-   - Il propose aussi la table des traductions : accepte **`regions_translations`**.
+## Step 3 — Languages and translated fields
 
-   Deux collections apparaissent. `regions_translations` est une table de liaison, que Directus
-   masque souvent : si elle n'apparaît pas dans la liste, cherche l'option qui affiche les
-   collections cachées.
-2. Dans **Content → Languages**, ne garde que **Français** (`fr`) et **English** (`en`). Supprime
-   les autres si Directus en a créé, ajoute ces deux-là s'ils manquent. **Pas de coréen
-   maintenant** : il s'ajoutera plus tard, par une simple ligne.
-3. Dans **Data Model → regions_translations**, crée les champs traduits :
-   - **`nom`** : Input, obligatoire ;
-   - **`description`** : **Markdown**, facultatif.
-4. Dans **Data Model → regions → traductions**, règle la langue par défaut sur **Français**, si
-   l'interface le propose.
+1. In `regions`, create a field with the **Translations** interface, key `traductions`.
+   - Directus offers to create the languages collection: accept **`languages`**.
+   - It also offers the translations table: accept **`regions_translations`**.
 
-Il existe un raccourci : l'assistant **Generate Translations**, dans les réglages de la collection,
-fait tout cela d'un coup. Mais il crée 8 langues par défaut (anglais, arabe, allemand…) qu'il
-faudrait supprimer ensuite. La voie manuelle ci-dessus montre mieux ce qui se passe.
+   Two collections appear. `regions_translations` is a junction table, which Directus often hides:
+   if you don't see it in the list, look for the option that shows hidden collections.
+2. In **Content → Languages**, keep only **French** (`fr`) and **English** (`en`). Delete the
+   others if Directus created any, and add these two if they are missing. **No Korean yet**: it will
+   come later, as a single new row.
+3. In **Data Model → regions_translations**, create the translated fields:
+   - **`nom`**: Input, required;
+   - **`description`**: **Markdown**, optional.
+4. In **Data Model → regions → traductions**, set the default language to **French**, if the
+   interface offers it.
 
-*Ce qui vient de se passer* : le nom et la description ne sont plus dans `regions` mais dans
-`regions_translations`, avec une ligne par région et par langue. Dans le formulaire, ils
-apparaissent en onglets FR | EN.
+There is a shortcut: the **Generate Translations** wizard, in the collection settings, does all of
+this in one go. But it creates 8 languages by default (English, Arabic, German…), which you would
+then have to delete. The manual route above shows better what is going on.
 
-- [ ] `languages` réduite à `fr` et `en`
-- [ ] Champs `nom` et `description` créés dans `regions_translations`
+*What just happened*: the name and the description no longer live in `regions` but in
+`regions_translations`, with one row per region and per language. In the form, they show up as
+FR | EN tabs.
 
-## Étape 4 — Saisir les quatre régions
+- [ ] `languages` reduced to `fr` and `en`
+- [ ] Fields `nom` and `description` created in `regions_translations`
 
-**Content → Regions → +**, puis remplis les onglets FR et EN du champ Traductions :
+## Step 4 — Enter the four regions
 
-| `slug` | `niveau` | `parent` | Nom FR | Nom EN |
+**Content → Regions → +**, then fill in both the FR and EN tabs of the Translations field:
+
+| `slug` | `niveau` | `parent` | Name (FR) | Name (EN) |
 |---|---|---|---|---|
 | `alpes` | Zone | — | Alpes | Alps |
 | `coree-du-sud` | Zone | — | Corée du Sud | South Korea |
 | `devoluy` | Massif | `alpes` | Dévoluy | Dévoluy |
 | `jeju` | Massif | `coree-du-sud` | Jeju | Jeju |
 
-Crée les deux zones d'abord : un massif a besoin de sa zone pour le champ `parent`. Ensuite, par
-glisser-déposer dans la liste, mets les Alpes avant la Corée du Sud.
+Create the two zones first: a massif needs its zone for the `parent` field. Then, by drag and drop
+in the list, put the Alps before South Korea.
 
-La règle « français et anglais obligatoires pour publier » n'existe pas encore : ce sera une
-extension de la phase 2. Remplis simplement les deux langues.
+The rule "French and English required to publish" does not exist yet: it will be a phase 2
+extension. Just fill in both languages.
 
-- [ ] Les quatre régions saisies, en français et en anglais
+- [ ] The four regions entered, in French and in English
 
-## Étape 5 — Faire le point, puis me passer la main
+## Step 5 — Recap, then hand over to me
 
-Tu as vu les briques qui servent partout ailleurs :
-- une **collection** et ses champs système (tri, dates, auteurs) ;
-- des **interfaces** : saisie, slug, liste déroulante, carte, Markdown ;
-- une **relation** « plusieurs à un », ici d'une région vers une autre ;
-- les **traductions** : une table de liaison vers `languages`.
+You have now seen the building blocks used everywhere else:
+- a **collection** and its system fields (sort, dates, authors);
+- **interfaces**: input, slug, dropdown, map, Markdown;
+- a **Many to One relation**, here from one region to another, and how it differs from One to
+  Many;
+- **translations**: a junction table towards `languages`.
 
-Dis-moi quand c'est fait. On regarde le résultat ensemble dans le navigateur de l'app, puis je prends
-la main pour `sommets`, `itineraires` et les autres collections. Il restera ensuite à exporter le
-schéma (`directus schema snapshot`) dans `apps/cms/snapshots/schema.yaml`, pour le versionner.
+Tell me when you are done. We look at the result together in the app's browser, then I take over
+for `sommets`, `itineraires` and the other collections. After that, the schema gets exported
+(`directus schema snapshot`) to `apps/cms/snapshots/schema.yaml`, so it is versioned.
