@@ -1,6 +1,6 @@
 # obiou-sommets — contexte projet pour Claude
 
-> Document de passation vivant. Dernière mise à jour : **2026-09-17**.
+> Document de passation vivant. Dernière mise à jour : **2026-09-18**.
 
 ## Ce que c'est
 
@@ -22,8 +22,6 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
 ## ▶ Prochaine session : reprendre ici
 
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
-- Décisions encore ouvertes à trancher d'abord : D2 cotation (SAC T1–T6 recommandée), D5 FIT au
-  lancement, D7 comptes utilisateurs, D9 fond de carte hors France. D6 est tranchée : dépôt **public**.
 - Modéliser les collections dans Directus **staging** (sommets, itinéraires, sorties, régions…),
   puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
@@ -44,7 +42,12 @@ jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser s
 
 - **Décidé par le propriétaire (2026-09-13)** : sous-domaine `sommets.obiou.eu` ; site personnel
   **non commercial, sans publicité** ; contenu = ses propres sorties, **Alpes + Corée du Sud**.
-- **Encore ouvert** : D2, D5, D6, D7, D9 de
+- **Décidé par le propriétaire (2026-09-18)**, sur recommandation : cotation **SAC T1–T6** complétée
+  par l'effort calculé (D2) ; **FIT** au lancement s'il passe les tests sur 3 montres réelles, sinon
+  v1.1 (D5) ; **pas de compte utilisateur** au lancement, favoris dans le navigateur (D7) ; hors de
+  France, **MapTiler gratuit** avec repli OpenTopoMap, PMTiles si le quota ne suffit plus (D9).
+  Dépôt **public** (D6).
+- **Encore ouvert** : D4, SCAN 25 en fond public (clé personnelle, CGU à relire) de
   [l'architecture](docs/01-architecture-technique.md#14-décisions-ouvertes).
 - **Maquettes** publiées (45 écrans, lots 1 à 4) : https://claude.ai/code/artifact/bb79abd1-e08c-4cf9-834a-017c95d230ec.
   Les artboards sources sont dans `design/*.dc.html`. Si le canvas a été modifié en ligne, la

@@ -43,8 +43,10 @@ On ouvre juste avant que les recherches « randonnée + sommet » remontent.
 
 - ✅ Décidés le 13 sept. : sous-domaine `sommets.obiou.eu`, site non commercial, contenu = tes sorties
   dans les Alpes et en Corée du Sud.
-- Reste à trancher : cotation, FIT au lancement, dépôt public, fond de carte hors de France
-  (D2, D5, D6, D9 de l'[architecture](01-architecture-technique.md#14-décisions-ouvertes)).
+- ✅ Décidés le 18 sept. : cotation SAC T1–T6 (D2), FIT au lancement s'il passe les tests sur 3
+  montres (D5), dépôt public (D6), pas de compte au lancement (D7), MapTiler gratuit et OpenTopoMap
+  hors de France (D9). Voir l'[architecture](01-architecture-technique.md#14-décisions-ouvertes).
+  Reste D4 : SCAN 25 en fond public (clé personnelle, ligne suivante).
 - Juridique : demander la clé SCAN 25 et relire ses CGU, rédiger l'avertissement (« récit de sortie,
   pas un topo officiel »).
 - **Inventaire de tes traces** : exporter l'historique de ta montre ou de ton appli (Garmin Connect,

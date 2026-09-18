@@ -149,7 +149,7 @@ jamais publié tel quel). Une sortie alimente la « date de dernière vérificat
 `type` (aller-retour · boucle · traversée) · `gpx_source` (fichier) · **calculés par le pipeline** :
 `trace` (LineString 3D), `trace_simplifiee`, `profil` (JSON échantillonné), `distance_km`,
 `denivele_pos_m`, `denivele_neg_m`, `altitude_min_m`, `altitude_max_m`, `duree_estimee_min`
-(modifiable à la main) · `cotation` (échelle à choisir, voir § 14) · `passages_delicats` ·
+(modifiable à la main) · `cotation` (SAC T1–T6, D2 au § 14) · `passages_delicats` ·
 `mois_praticables` · `equipement` · `points_eau` · `dangers` · `acces_transport_commun` ·
 `reservation_requise` + `reglementation` (quotas, fermetures saisonnières des parcs nationaux
 coréens, zones de quiétude) ·
@@ -439,11 +439,11 @@ obiou-sommets/
 | # | Question | Recommandation |
 |---|---|---|
 | D1 | Nom du projet et sous-domaine | ✅ **Décidé** : `sommets.obiou.eu` |
-| D2 | Échelle de cotation | Échelle **SAC T1–T6** (standard alpin, utilisée par Camptocamp, applicable aussi en Corée), complétée par l'effort calculé |
+| D2 | Échelle de cotation | ✅ **Décidé (18 sept. 2026)** : échelle **SAC T1–T6** (standard alpin, utilisée par Camptocamp, applicable aussi en Corée), complétée par l'effort calculé |
 | D3 | Périmètre géographique | ✅ **Décidé** : sorties personnelles, Alpes + Corée du Sud |
 | D4 | SCAN 25 en fond public | Oui, usage non commercial, avec clé personnelle et relecture des CGU |
-| D5 | Export FIT au lancement | Oui si les tests sur 3 montres passent, sinon v1.1 |
-| D6 | Dépôt public ou privé | **Public** (minutes Actions, protection de branche, crédibilité) |
-| D7 | Comptes utilisateurs | Non au lancement ; favoris locaux ; comptes si la demande apparaît |
+| D5 | Export FIT au lancement | ✅ **Décidé (18 sept. 2026)** : au lancement si les tests sur 3 montres réelles passent, sinon en v1.1 |
+| D6 | Dépôt public ou privé | ✅ **Décidé** : **public** (minutes Actions, protection de branche, crédibilité) |
+| D7 | Comptes utilisateurs | ✅ **Décidé (18 sept. 2026)** : pas de compte au lancement ; favoris stockés dans le navigateur ; comptes si la demande apparaît |
 | D8 | Modèle économique | ✅ **Décidé** : site personnel non commercial, sans publicité (SCAN 25, Open-Meteo et MapTiler gratuit utilisables) |
-| D9 | Fond de carte hors de France | MapTiler gratuit + repli OpenTopoMap au lancement ; PMTiles auto-hébergés si le quota devient un problème |
+| D9 | Fond de carte hors de France | ✅ **Décidé (18 sept. 2026)** : MapTiler gratuit, repli OpenTopoMap au lancement ; PMTiles auto-hébergés si le quota devient un problème |
