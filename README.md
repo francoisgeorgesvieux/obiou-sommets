@@ -23,8 +23,9 @@ En ligne sur `sommets.obiou.eu`.
 | [Roadmap de déploiement](docs/02-roadmap-deploiement.md) | Phases, jalons, critères de sortie, procédure Railway + DNS |
 | [Prompt Claude Design](docs/03-prompt-claude-design.md) | Prompt complet décrivant toutes les pages publiques et admin |
 | [Avis critique](docs/04-avis-critique.md) | Forces, risques, recommandations, questions ouvertes |
-| [Modèle de données](docs/05-modele-de-donnees.md) | Collections, champs, vues publiques, droits (proposition à valider) |
+| [Modèle de données](docs/05-modele-de-donnees.md) | Collections, champs, langues, vues publiques, droits (validé le 18 sept. 2026) |
 | [SCAN 25, marche à suivre](docs/06-scan25-pas-a-pas.md) | Licence IGN grand public : décision, démarche, obligations (D4) |
+| [Directus, premières collections](docs/07-directus-premieres-collections.md) | Guide pas à pas : `languages` et `regions` dans l'admin staging |
 
 ## Stack
 

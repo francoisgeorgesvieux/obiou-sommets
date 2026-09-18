@@ -22,10 +22,15 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
 ## ▶ Prochaine session : reprendre ici
 
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
-- **Modèle de données validé le 2026-09-18**, sauf la section « Langues » (questions L1 à L4) :
-  [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi. Ensuite : créer les
-  collections **à la main dans l'admin Directus staging** (choix du propriétaire), puis
-  `directus schema snapshot` → `apps/cms/snapshots/schema.yaml` → PR.
+- **Modèle de données validé le 2026-09-18**, langues comprises :
+  [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi.
+- **En cours : le propriétaire crée lui-même `languages` et `regions`** dans l'admin Directus
+  staging, pour monter en compétence, en suivant
+  [docs/07-directus-premieres-collections.md](docs/07-directus-premieres-collections.md). Ensuite,
+  **Claude prend la main** pour les autres collections, toujours à la main dans l'admin staging :
+  le propriétaire se connecte dans le navigateur de l'app, Claude clique et ne saisit jamais de mot
+  de passe. Puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml`. Vérifier d'abord ce
+  qu'il a créé (noms, `languages` réduite à `fr` et `en`).
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
@@ -54,9 +59,13 @@ jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser s
   Grand Public » (contrat avec l'IGN, relevé trimestriel, pénalité de 40 €/jour de retard, pas de
   cache). Une entreprise n'y change rien à elle seule, et un rattachement à une activité monétisée
   menacerait les offres gratuites non commerciales (MapTiler, Open-Meteo). Démarche prête :
-  [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md).
-- **Langues (2026-09-18)** : le propriétaire veut le site **aussi en anglais**. Le modèle de données
-  le prévoit (tables `…_traductions`) ; questions L1 à L4 en attente de réponse.
+  [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md). Le propriétaire écrit à l'IGN
+  (étape 1) et tiendra Claude au courant.
+- **Langues (décidées le 2026-09-18)** : français (source) et anglais, **tous deux obligatoires
+  pour publier**, coréen à prévoir plus tard (facultatif au début). Tables `…_translations` de
+  Directus, collection `languages` avec un champ `obligatoire`. Directus ne sait pas exiger une
+  langue : un hook de la phase 2 bloquera la publication s'il manque une traduction obligatoire.
+  Noms propres non traduits, adresses anglaises sous `/en`. Rôle Contributeur : plus tard.
 - **Maquettes** publiées (45 écrans, lots 1 à 4) : https://claude.ai/code/artifact/bb79abd1-e08c-4cf9-834a-017c95d230ec.
   Les artboards sources sont dans `design/*.dc.html`. Si le canvas a été modifié en ligne, la
   version en ligne fait foi : la relire avant de régénérer. Données et fonds de carte fictifs.
@@ -232,3 +241,4 @@ puis `railway config plan` (lecture seule) avant tout `apply`. Un plan propre di
 - [docs/04-avis-critique.md](docs/04-avis-critique.md)
 - [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md)
 - [docs/06-scan25-pas-a-pas.md](docs/06-scan25-pas-a-pas.md)
+- [docs/07-directus-premieres-collections.md](docs/07-directus-premieres-collections.md)

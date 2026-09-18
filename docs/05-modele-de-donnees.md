@@ -1,7 +1,6 @@
 # Modèle de données — Obiou Sommets
 
-> Statut : **validé le 18 septembre 2026**, sauf la section « Langues », ajoutée le même jour et
-> à valider (4 questions en fin de document). Détaille le § 5 de
+> Statut : **validé le 18 septembre 2026**, langues comprises. Détaille le § 5 de
 > l'[architecture](01-architecture-technique.md#5-modèle-de-données) avec les décisions du 18 sept.
 > (D2, D5, D7, D9) et ce que montrent les maquettes. Une fois validé, **ce document fait foi** pour
 > le détail des champs ; le snapshot Directus (`apps/cms/snapshots/`) en sera la traduction exacte.
@@ -11,9 +10,9 @@
 - **13 collections**, 4 tables de liaison et 10 tables de traductions (plus celles que Directus
   crée pour les listes de photos), le singleton `parametres_site` et deux champs ajoutés aux
   fichiers Directus (`credit`, `alt`).
-- **Deux langues** : français (source) et anglais. Les textes traduisibles vivent dans des tables
-  `…_traductions`, une ligne par langue. Ajouter le coréen plus tard, c'est ajouter une ligne, sans
-  toucher au schéma.
+- **Deux langues, obligatoires à la publication** : français (source) et anglais. Les textes
+  traduisibles vivent dans des tables `…_translations`, une ligne par langue. Le coréen viendra
+  ensuite : une ligne à ajouter, sans toucher au schéma.
 - **Tout ce qui se calcule n'est jamais saisi** : distance, dénivelés, durée, effort viennent du
   GPX ; les kilomètres des étapes et des POI se déduisent de leur position sur la trace. On ne
   stocke pas deux fois la même information.
@@ -22,8 +21,6 @@
   calcul et ta correction, et c'est ta correction qui s'affiche.
 - **Le public ne voit que des vues SQL** (`public_*`), filtrées sur le contenu publié. Les GPX
   bruts, les anomalies et les signalements n'y apparaissent jamais.
-- **4 questions sur les langues** en fin de document, chacune avec ma recommandation. Les 5
-  premières questions sont tranchées.
 
 ## Vue d'ensemble
 
@@ -57,23 +54,32 @@ erDiagram
 | Listes courtes | JSON (listes de mois, d'équipements, de points de vigilance). |
 | Traçabilité | Champs système Directus sur chaque collection de contenu : `date_created`, `date_updated`, `user_created`, `user_updated`. Ils alimentent le tableau de bord (« brouillons créés par l'IA ») et remplacent le `verifie_par` de l'architecture. |
 | Langues | Français (source) et anglais : voir la section « Langues ». Les sommets coréens ont aussi un nom local (hangeul) et une romanisation. |
+| Noms techniques | En français pour nos collections et nos champs. Ce que Directus génère lui-même garde ses noms par défaut (`languages`, `…_translations`, `sort`) : inutile de lutter contre l'outil. |
 
 ## Langues
 
-> Ajoutée le 18 septembre 2026 à ta demande, **à valider** (questions L1 à L4).
-
 Le site existe en **français**, langue source, et en **anglais**. Le mécanisme est l'interface
 « Traductions » de Directus :
-- chaque collection concernée a une table `<collection>_traductions`, avec une ligne par langue, qui
+- chaque collection concernée a une table `<collection>_translations`, avec une ligne par langue, qui
   porte les champs traduits 🌐 ;
 - le reste (position, altitude, calculs, relations) est commun à toutes les langues ;
 - dans l'admin, les traductions apparaissent en onglets FR | EN dans le même formulaire.
 
-**Collection `langues`** : `code` (`fr`, `en`), `nom`, `ordre`, `source` (vrai pour `fr`).
+**Collection `languages`**, créée par Directus : `code` (`fr`, `en`), `name`, plus un champ à nous,
+`obligatoire`. Le français est la langue par défaut de l'interface de traduction.
 
-**Chaque traduction a son statut**, `brouillon` ou `publie`. Un contenu apparaît dans une langue
-quand il est publié **et** que sa traduction dans cette langue l'est (question L2). La version
-française, source, suit le statut du contenu.
+**Langues obligatoires** (ton souhait du 18 sept.) : on ne peut **publier** un contenu que si sa
+traduction est complète dans **chaque langue obligatoire**, c'est-à-dire tous ses champs requis
+remplis. Aujourd'hui : `fr` et `en`. Directus ne sait pas exiger une langue : une petite extension
+(un *hook*) bloquera la publication, avec un message qui nomme la langue et les champs manquants.
+Elle fait partie des extensions de la phase 2. Tant qu'elle n'existe pas, la règle est à tenir à la
+main.
+
+**Chaque traduction a son statut**, `brouillon` ou `publie`. Une langue obligatoire doit être
+publiée pour que le contenu le soit. Une langue facultative, comme le coréen au début, apparaît dès
+que sa traduction est publiée ; sinon, le sélecteur de langue renvoie vers la version française.
+Ce statut par traduction permet aussi à l'agent IA de préparer une traduction en brouillon sur un
+contenu déjà publié.
 
 | Collection | Champs traduits 🌐 |
 |---|---|
@@ -90,13 +96,13 @@ française, source, suit le statut du contenu.
 | fichiers | `alt`, le texte alternatif des photos, une valeur par langue |
 
 **Ce qui n'est pas traduit** :
-- les noms propres : sommets, massifs, POI (« Obiou », « Dévoluy », « Cabane du vallon ») — question L3 ;
+- les noms propres : sommets, massifs, POI (« Obiou », « Dévoluy », « Cabane du vallon ») ;
 - les slugs des sommets et des massifs ;
 - les données chiffrées ;
 - les libellés des listes (cotation T1–T6, types, catégories) : ils se traduisent dans le code du
   site, pas en base.
 
-**Adresses** : le français est à la racine, l'anglais sous `/en` (question L4) :
+**Adresses** : le français est à la racine, l'anglais sous `/en` :
 `/sommets/obiou/voie-normale-par-le-vallon` ↔ `/en/summits/obiou/normal-route-via-the-valley`.
 Chaque page déclare ses autres versions (`hreflang`), et le sitemap liste les deux langues.
 
@@ -110,10 +116,18 @@ la relis et tu la publies. C'est la règle « brouillons seulement », telle que
 traduction anglaise « à revoir » (source modifiée après elle). À outiller en phase 2, avec les
 autres extensions.
 
+**Préparer le coréen** (plus tard, sans changer le schéma) :
+- une ligne `ko` dans `languages`, **facultative** au début, obligatoire quand tu le décideras ;
+- des adresses sous `/ko`, avec les mêmes slugs romanisés ;
+- une police qui contient le hangeul : les polices actuelles du site (Barlow Condensed, Public Sans)
+  n'en ont pas, il faudra une police de secours comme Noto Sans KR ;
+- la recherche : Postgres n'a pas de dictionnaire coréen, il faudra une recherche par trigrammes ;
+- les sommets coréens ont déjà leur nom en hangeul (`nom_local`), affiché dans toutes les langues.
+
 ## Collections
 
 Légende : **Obl.** = obligatoire pour publier. 🔒 = jamais public. ⚙️ = calculé par le pipeline,
-lecture seule dans l'admin. 🌐 = traduit : le champ vit dans la table `…_traductions`, avec une
+lecture seule dans l'admin. 🌐 = traduit : le champ vit dans la table `…_translations`, avec une
 valeur par langue.
 
 ### `regions` — zones et massifs
@@ -129,7 +143,7 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | `niveau` | choix : `zone` · `massif` | ✓ | |
 | `parent` | → `regions` | massif ✓ | la zone d'un massif |
 | 🌐 `description` | markdown | | page massif |
-| `ordre` | entier | | ordre d'affichage |
+| `sort` | entier | | ordre d'affichage, par glisser-déposer (champ de tri de Directus) |
 | `emprise` | Polygon | | facultatif, pour recentrer la carte |
 
 ### `sommets`
@@ -201,7 +215,7 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | `T5` | Randonnée alpine exigeante |
 | `T6` | Randonnée alpine difficile |
 
-**Tables de liaison** : `itineraires_sommets` (`itineraire`, `sommet`, `ordre`),
+**Tables de liaison** : `itineraires_sommets` (`itineraire`, `sommet`, `sort`),
 `itineraires_poi` (`itineraire`, `poi`), `itineraires_conseils` et `sommets_conseils`
 (`conseil`, cible). Le kilomètre d'un POI sur l'itinéraire n'est **pas stocké** : la vue le calcule
 en projetant le POI sur la trace (`ST_LineLocatePoint`). Il suit donc la trace quand tu la remplaces.
@@ -211,7 +225,7 @@ en projetant le POI sur la trace (`ST_LineLocatePoint`). Il suit donc la trace q
 | Champ | Type | Obl. | Notes |
 |---|---|---|---|
 | `itineraire` | → `itineraires` | ✓ | |
-| `ordre` | entier | ✓ | glisser-déposer dans l'admin |
+| `sort` | entier | ✓ | ordre des étapes, par glisser-déposer |
 | 🌐 `titre` | texte | ✓ | « Cabane → source du vallon » |
 | 🌐 `texte` | markdown | | |
 | `position_fin` | Point | | fin de l'étape ; donne les km et altitudes affichés (« km 2,8 – 3,4 · 1 640 → 1 790 m »), calculés par la vue |
@@ -309,7 +323,7 @@ IP ni identifiant.**
 ### `pages`
 
 `statut` · 🌐 `slug` · 🌐 `titre` · `type` (`a_propos` · `guide` · `legal`) · 🌐 `contenu` (markdown) ·
-`ordre`.
+`sort`.
 Les guides (`/guides/importer-une-trace`, `/guides/cotations`…) sont des pages de type `guide`.
 
 ### `parametres_site` — singleton
@@ -332,7 +346,7 @@ fichiers, d'où ce champ unique. Trois dossiers : `gpx-prives` 🔒 (GPX sources
 |---|---|---|---|---|
 | Administrateur | tout | ✓ | ✓ | ✓ (2FA obligatoire) |
 | Éditeur | tout le contenu | ✓ | ✓ | — |
-| Contributeur (créé dès maintenant) | brouillons | — | — | — |
+| Contributeur (plus tard, quand quelqu'un d'autre contribuera) | brouillons | — | — | — |
 | **Agent IA** (MCP) | lit tout sauf les GPX bruts ; crée et modifie **seulement si le statut est `brouillon` ou `en_relecture`** ; rédige les traductions en brouillon | — | — | — |
 
 Pour l'Agent IA, la règle s'étend aux collections sans statut. Il peut modifier les étapes et les
@@ -407,26 +421,23 @@ leurs règles propres dans `reglementation` (heures limites de passage).
 1. **Sorties publiques** : oui, avec une case `publique` par sortie pour en garder pour toi.
 2. **Kilomètre-effort** affiché à côté de la cotation : oui.
 3. **Slug verrouillé** une fois publié : oui ; une table de redirections plus tard si besoin.
-4. **Rôle Contributeur** : créé dès maintenant.
+4. **Rôle Contributeur** : plus tard, le jour où quelqu'un d'autre contribuera.
 5. **Deux niveaux zone › massif** : oui ; le pays reste porté par le sommet.
 
-## Questions sur les langues
+## Décisions sur les langues, le 18 septembre
 
-- **L1. Français comme source, anglais, et coréen plus tard sans changer le schéma ?**
-  **Recommandation** : oui.
-- **L2. Un contenu n'apparaît en anglais que si sa traduction est publiée ?** Sinon, le sélecteur
-  de langue renvoie vers la version française. **Recommandation** : oui. Une page anglaise à moitié
-  en français gêne la lecture et le référencement. Le site anglais sera plus petit au début.
-- **L3. Noms propres non traduits** (sommets, massifs, POI), mais noms d'itinéraires et de points
-  de départ traduits (« Voie normale par le vallon » → « Normal route via the valley ») ?
-  **Recommandation** : oui. Ce sont les noms qu'on lit sur le terrain et sur les cartes.
-- **L4. Adresses anglaises sous `/en`**, slugs de sommets communs aux deux langues, slugs
-  d'itinéraires traduits ? **Recommandation** : oui.
+- **L1.** Français source et anglais ; **le coréen est à prévoir** (voir « Préparer le coréen »).
+- **L2.** Une langue n'apparaît que traduite. Et plus : **le français et l'anglais sont
+  obligatoires pour publier** (voir « Langues obligatoires »).
+- **L3.** Noms propres non traduits ; noms d'itinéraires et de points de départ traduits.
+- **L4.** Adresses anglaises sous `/en`, slugs de sommets communs, slugs d'itinéraires traduits.
 
 ## Ce qui vient ensuite
 
-1. Tu réponds aux 4 questions sur les langues.
-2. Création des collections **à la main dans l'admin Directus staging** (choix du 18 sept.), puis
+1. **Tu crées les premières collections** (`languages` et `regions`) dans l'admin Directus
+   staging, en suivant [07-directus-premieres-collections.md](07-directus-premieres-collections.md),
+   pour voir comment Directus fonctionne.
+2. **Je prends la main** pour les autres collections, toujours dans l'admin staging, puis
    `directus schema snapshot` vers `apps/cms/snapshots/schema.yaml`.
 3. `packages/domain` : types et schémas Zod des vues publiques, partagés par le site et le MCP.
 4. `db/views` : les vues `public_*`, les deux rôles Postgres et leurs fonctions, avec le test de
