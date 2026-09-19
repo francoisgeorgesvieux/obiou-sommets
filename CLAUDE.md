@@ -24,13 +24,31 @@ depuis le 15 (36 tables), dump de production restauré par le propriétaire le 1
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
 - **Modèle de données validé le 2026-09-18**, langues comprises :
   [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi.
-- **En cours : le propriétaire crée lui-même `languages` et `regions`** dans l'admin Directus
-  staging, pour monter en compétence, en suivant
-  [docs/07-directus-premieres-collections.md](docs/07-directus-premieres-collections.md). Ensuite,
-  **Claude prend la main** pour les autres collections, toujours à la main dans l'admin staging :
-  le propriétaire se connecte dans le navigateur de l'app, Claude clique et ne saisit jamais de mot
-  de passe. Puis `directus schema snapshot` → `apps/cms/snapshots/schema.yaml`. Vérifier d'abord ce
-  qu'il a créé (noms, `languages` réduite à `fr` et `en`).
+- **Schéma Directus complet écrit le 2026-09-19** (branche `schema/phase2-collections`) : le
+  propriétaire a créé `languages` et `regions` à la main (guide
+  [docs/07](docs/07-directus-premieres-collections.md)), puis il a choisi que Claude écrive le reste
+  dans `apps/cms/snapshots/schema.yaml` plutôt que de cliquer dans l'admin. 30 collections, 259
+  champs, 66 relations, générés depuis son export staging. Testé sur un Directus 12.3.1 local :
+  appliqué sans erreur, idempotent, données existantes gardées, relations et règles de suppression
+  vérifiées par l'API. **Déploiement** : pousser la branche sur `staging` seulement, le
+  propriétaire vérifie dans l'admin, coche `obligatoire` pour `fr` et `en`, réexporte le schéma
+  (voir `apps/cms/snapshots/README.md`) ; l'export remplace `schema.yaml`, puis PR vers `main`.
+  **Tant que la PR n'est pas fusionnée, `staging` a de l'avance sur `main` : ne pas pousser
+  `main:staging`** (refusé, et ça retirerait le schéma) ; fusionner `main` dans la branche à la place.
+- **Pièges Directus 12 mesurés le 2026-09-19** :
+  - **licence** : 25 collections maximum en « Core » (sans clé), tables de traduction et de liaison
+    comprises (dossiers exclus). Le schéma en a 30 : il faut la licence Innovation Grant, que
+    staging et production ont. Vérifier la limite de la clé : `GET /license` (admin), qui renvoie
+    limites et usage, jamais la clé. En local sans clé, tester par moitiés de 25 au plus ;
+  - **`schema apply` à chaque démarrage** de `cms` (`entrypoint.cjs`) : la base devient identique au
+    fichier, donc tout ce qui a été créé dans l'admin sans être exporté est **supprimé avec ses
+    données** au déploiement suivant. Exporter et commiter avant tout redéploiement de `cms` ;
+  - un `schema apply` en échec **n'est pas atomique** ;
+  - appliqué en ligne de commande pendant que le serveur tourne, le schéma n'est vu qu'après
+    redémarrage du serveur (cache). Sans conséquence sur Railway : l'image l'applique avant de
+    démarrer ;
+  - `railway ssh` demande une clé SSH enregistrée chez Railway (aucune ici) ; l'export passe par
+    `/schema/snapshot?export=yaml` dans le navigateur du propriétaire.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
