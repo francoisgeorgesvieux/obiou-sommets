@@ -1,2 +1,5 @@
 export { EARTH_RADIUS_M, haversineMeters, trackLengthMeters, type LonLat } from './distance'
+export { DIN_33466, din33466Hours, type EffortInput } from './duration'
 export { elevationTotals, type ElevationTotals } from './elevation'
+export { GpxError, MAX_GPX_BYTES, parseGpx, type ParsedGpx, type TrackPoint } from './gpx'
+export { trackStats, type TrackStats } from './stats'
