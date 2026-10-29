@@ -1,6 +1,6 @@
 # obiou-sommets — contexte projet pour Claude
 
-> Document de passation vivant. Dernière mise à jour : **2026-09-18**.
+> Document de passation vivant. Dernière mise à jour : **2026-10-29**.
 
 ## Ce que c'est
 
@@ -17,24 +17,50 @@ Projet frère d'[obioucounting](../obioucounting) (même propriétaire, même do
 staging** (admins créés, 2FA active, licence Open Innovation Grant reconnue, `ADMIN_PASSWORD` retirée
 des deux). Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Sauvegarde nocturne verte
 depuis le 15 (36 tables), dump de production restauré par le propriétaire le 17 (36 tables, dont 33
-`directus_*`). **Phase 2 (CMS et pipeline GPX) : pas commencée.**
+`directus_*`). **Phase 2 (CMS et pipeline GPX) : en cours depuis le 2026-09-19** (schéma Directus
+écrit ; pipeline GPX pas commencé).
+
+🔴 **Le 2026-10-29 à 08:10:36 UTC, Railway a arrêté tous les services du compte** (Sommets prod et
+staging, base comprise, et la compta), proprement et à la même seconde, sans échec ni redéploiement.
+Cause probable : limite d'usage ou abonnement Hobby. Le propriétaire est prévenu, lui seul agit sur
+la facturation. Volumes intacts a priori. Tant que ce n'est pas réglé, aucune vérification en ligne.
+
+## Mode de travail (décidé par le propriétaire le 2026-10-29)
+
+**Claude avance seul et se teste lui-même.** Le propriétaire n'est plus sollicité pour les petites
+vérifications (relire un schéma dans l'admin, cliquer une page) : ça faisait attendre Claude pour
+peu. Il fait de **gros lots de tests avant chaque passage en production** d'un ensemble de
+fonctionnalités. Avec lui, on travaille le **design produit, la vision et les méthodes de gestion de
+produit** (brainstorming, priorisation). Le site n'a qu'un utilisateur pour l'instant.
+
+Concrètement :
+- **Claude vérifie lui-même** : tests unitaires et `pnpm check`, Playwright (`pnpm e2e`) en local,
+  Directus local pour tout changement de schéma (voir *Tester Directus en local* plus bas).
+- **Claude ne fusionne pas vers `main`** (= production) : il ouvre la PR, la mène au vert et la
+  laisse au propriétaire, qui la fusionne après son lot de tests. `staging` reçoit les branches de
+  travail librement.
+- **Restent au propriétaire** : les secrets, la facturation, les choix produit, tout ce qui part
+  hors du projet, et les données personnelles (GPX réels publiés dans un dépôt public).
+- La session cloud de Claude **ne joint pas** `*.up.railway.app` ni `sommets.obiou.eu` (proxy
+  réseau, 403 mesuré le 2026-10-29) : l'état en ligne se lit par le MCP Railway
+  (`environment-status`, `get-logs`), pas par HTTP. Ouvrir ces domaines dans la politique réseau de
+  l'environnement cloud permettrait les sondes et les tests e2e contre staging.
 
 ## ▶ Prochaine session : reprendre ici
 
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
 - **Modèle de données validé le 2026-09-18**, langues comprises :
   [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi.
-- **Schéma Directus complet écrit le 2026-09-19** (branche `schema/phase2-collections`) : le
-  propriétaire a créé `languages` et `regions` à la main (guide
-  [docs/07](docs/07-directus-premieres-collections.md)), puis il a choisi que Claude écrive le reste
-  dans `apps/cms/snapshots/schema.yaml` plutôt que de cliquer dans l'admin. 30 collections, 259
-  champs, 66 relations, générés depuis son export staging. Testé sur un Directus 12.3.1 local :
-  appliqué sans erreur, idempotent, données existantes gardées, relations et règles de suppression
-  vérifiées par l'API. **Déploiement** : pousser la branche sur `staging` seulement, le
-  propriétaire vérifie dans l'admin, coche `obligatoire` pour `fr` et `en`, réexporte le schéma
-  (voir `apps/cms/snapshots/README.md`) ; l'export remplace `schema.yaml`, puis PR vers `main`.
-  **Tant que la PR n'est pas fusionnée, `staging` a de l'avance sur `main` : ne pas pousser
-  `main:staging`** (refusé, et ça retirerait le schéma) ; fusionner `main` dans la branche à la place.
+- **Schéma Directus complet écrit le 2026-09-19** : le propriétaire a créé `languages` et
+  `regions` à la main (guide [docs/07](docs/07-directus-premieres-collections.md)), Claude a écrit
+  le reste dans `apps/cms/snapshots/schema.yaml`. 30 collections, 259 champs, 66 relations. Testé
+  le 19 sept. sur un Directus 12.3.1 local (appliqué par moitiés, idempotent, données gardées) et
+  **revérifié par Claude le 2026-10-29** à la place de la relecture prévue dans l'admin : sur une
+  base neuve, `schema apply --dry-run` planifie 33 collections (30 + 3 dossiers), 358 créations,
+  aucune suppression. Déployé sur `staging` le 19 sept. ; **PR vers `main` ouverte par Claude,
+  fusion par le propriétaire** après son lot de tests. Reste à faire **une fois Railway relancé** :
+  cocher `obligatoire` pour `fr` et `en` dans `languages` (c'est une donnée, pas le schéma), en
+  staging puis en production.
 - **Pièges Directus 12 mesurés le 2026-09-19** :
   - **licence** : 25 collections maximum en « Core » (sans clé), tables de traduction et de liaison
     comprises (dossiers exclus). Le schéma en a 30 : il faut la licence Innovation Grant, que
@@ -60,8 +86,9 @@ Innovation Grant), domaines HTTPS, plan IaC vide sur les deux environnements, ca
 le 2026-09-17, sauvegardes des 15, 16 et 17 vertes et restauration réelle réussie.
 
 **Rappels de méthode** : secrets posés par le propriétaire uniquement (script `set-cms-secrets.sh`),
-jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser sur `main` **et**
-`staging` (`git push origin main && git push origin main:staging`) tant qu'il n'y a pas de PR.
+jamais lus par Claude ; toujours `railway config plan` avant `apply`. **Branches** : une branche de
+travail par sujet, poussée sur `staging` pour l'essayer en ligne, puis PR vers `main` que le
+propriétaire fusionne. Ne plus pousser `main:staging` tant que `staging` a de l'avance (refusé).
 
 ## Décisions
 
@@ -90,9 +117,18 @@ jamais lus par Claude ; toujours `railway config plan` avant `apply` ; pousser s
 
 ## Commandes
 
-pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack pnpm`).
+pnpm arrive par corepack (`corepack enable` une fois, ou préfixer par `corepack pnpm`). Dans une
+session cloud, corepack échoue (`pnpm.cjs` introuvable, 2026-10-29) : `npx -y pnpm@12.4.1 <commande>`.
 
 - `pnpm install` · `pnpm dev` (Nuxt) · `docker compose up -d` (Postgres PostGIS + Directus locaux)
+- **Tester Directus en local, dans une session cloud** (mesuré le 2026-10-29) : le démon Docker n'y
+  tourne pas d'office (`dockerd &` le lance) et Docker Hub y répond **429** pour
+  `directus/directus` (l'image PostGIS passe). Voie qui marche : Postgres dans Docker
+  (`docker run -d -p 5440:5432 … postgis/postgis:17-3.5-alpine`) et Directus **depuis npm** dans un
+  dossier de travail (`npm i directus@~12.3 pg`, un `.env` avec `DB_CONNECTION_STRING`, `SECRET`,
+  `ADMIN_*`), puis `npx directus bootstrap` et
+  `npx directus schema apply --dry-run <chemin>/schema.yaml`. Sans licence, l'application réelle
+  plafonne à 25 collections : appliquer par moitiés.
 - `pnpm check` = lint + typecheck + tests + contrôle des lignes modifiées, comme la CI ; `pnpm build`
   construit le site. **À lancer avant chaque commit.**
 - **Couverture de tests, deux règles en CI** (mécanique reprise d'obioucounting) :
