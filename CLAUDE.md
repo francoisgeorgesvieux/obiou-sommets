@@ -75,6 +75,10 @@ Concrètement :
     démarrer ;
   - `railway ssh` demande une clé SSH enregistrée chez Railway (aucune ici) ; l'export passe par
     `/schema/snapshot?export=yaml` dans le navigateur du propriétaire.
+- **`packages/geo` commencé le 2026-10-29** : `parseGpx` (refus DOCTYPE/ENTITY, taille, XML mal
+  formé, coordonnées invalides), `trackStats` (distance, D+/D- par segment, altitudes extrêmes),
+  `din33466Hours`. Corpus synthétique seulement. Suite : nettoyage des métadonnées personnelles et
+  zone de confidentialité, simplification et profil, exports GPX/KML/GeoJSON.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
