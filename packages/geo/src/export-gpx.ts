@@ -1,12 +1,5 @@
 import type { PublicPoint } from './privacy'
-
-const escapeXml = (value: string): string =>
-  value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&apos;')
+import { escapeXml } from './xml'
 
 // ~1 cm horizontally and 1 cm vertically: finer than any GPS, and it keeps files small.
 const coord = (value: number): string => String(Number(value.toFixed(7)))

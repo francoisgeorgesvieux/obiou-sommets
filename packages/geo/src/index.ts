@@ -5,3 +5,6 @@ export { GpxError, MAX_GPX_BYTES, parseGpx, type ParsedGpx, type TrackPoint } fr
 export { trackStats, type TrackStats } from './stats'
 export { toGpx } from './export-gpx'
 export { sanitizeSegments, type PublicPoint, type SanitizeOptions } from './privacy'
+export { toGeoJson, toKml } from './export-geo'
+export { elevationProfile, type ProfilePoint } from './profile'
+export { simplify } from './simplify'
