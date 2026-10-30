@@ -118,6 +118,15 @@ describe('parseGpx', () => {
     expect(() => parseGpx(xml)).toThrow(message)
   })
 
+  it('decodes predefined entities and character references in names', () => {
+    const named = (name: string) => parseGpx(gpx(`<metadata><name>${name}</name></metadata><trk><trkseg>${pt(1, 1)}</trkseg></trk>`)).name
+    expect(named('Pic d&apos;Aurouze &amp; T&#xEA;te de Vachi&#232;re')).toBe("Pic d'Aurouze & Tête de Vachière")
+    expect(named('&lt;&gt;&quot;')).toBe('<>"')
+    expect(named('&#x4A;&#x4a;')).toBe('JJ')
+    // A reference past the last code point stays as written instead of throwing.
+    expect(named('a&#x110000;b')).toBe('a&#x110000;b')
+  })
+
   it('names its errors', () => {
     expect(new GpxError('x').name).toBe('GpxError')
   })

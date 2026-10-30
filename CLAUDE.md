@@ -18,12 +18,11 @@ staging** (admins créés, 2FA active, licence Open Innovation Grant reconnue, `
 des deux). Domaines `sommets.obiou.eu` et `admin.sommets.obiou.eu` en HTTPS. Sauvegarde nocturne verte
 depuis le 15 (36 tables), dump de production restauré par le propriétaire le 17 (36 tables, dont 33
 `directus_*`). **Phase 2 (CMS et pipeline GPX) : en cours depuis le 2026-09-19** (schéma Directus
-écrit ; pipeline GPX pas commencé).
+en production depuis le 2026-10-30 ; pipeline GPX commencé dans `packages/geo`).
 
-🔴 **Le 2026-10-29 à 08:10:36 UTC, Railway a arrêté tous les services du compte** (Sommets prod et
-staging, base comprise, et la compta), proprement et à la même seconde, sans échec ni redéploiement.
-Cause probable : limite d'usage ou abonnement Hobby. Le propriétaire est prévenu, lui seul agit sur
-la facturation. Volumes intacts a priori. Tant que ce n'est pas réglé, aucune vérification en ligne.
+Le 2026-10-29, la limite stricte d'usage Railway a arrêté tout le compte ; relevée par le
+propriétaire le 2026-10-30 à 04:56 UTC, tout est reparti. Depuis, **tous les services sont en
+veille** (voir *Infrastructure Railway*).
 
 ## Mode de travail (décidé par le propriétaire le 2026-10-29)
 
@@ -61,9 +60,9 @@ Concrètement :
   **revérifié par Claude le 2026-10-29** à la place de la relecture prévue dans l'admin : sur une
   base neuve, `schema apply --dry-run` planifie 33 collections (30 + 3 dossiers), 358 créations,
   aucune suppression. Déployé sur `staging` le 19 sept., fusionné vers `main` par Claude le
-  2026-10-30 (PR #1 : ajout pur, aucune donnée en production). Reste à faire **une fois Railway relancé** :
-  cocher `obligatoire` pour `fr` et `en` dans `languages` (c'est une donnée, pas le schéma), en
-  staging puis en production.
+  2026-10-30 (PR #1 : ajout pur), appliqué en production le jour même (`[obiou] schema apply` puis
+  serveur démarré). Reste à faire : `obligatoire` vrai pour `fr` et `en` dans `languages` (une
+  donnée, pas le schéma) ; Claude n'a pas d'accès à l'admin, le hook de publication le posera.
 - **Pièges Directus 12 mesurés le 2026-09-19** :
   - **licence** : 25 collections maximum en « Core » (sans clé), tables de traduction et de liaison
     comprises (dossiers exclus). Le schéma en a 30 : il faut la licence Innovation Grant, que
@@ -78,10 +77,12 @@ Concrètement :
     démarrer ;
   - `railway ssh` demande une clé SSH enregistrée chez Railway (aucune ici) ; l'export passe par
     `/schema/snapshot?export=yaml` dans le navigateur du propriétaire.
-- **`packages/geo` commencé le 2026-10-29** : `parseGpx` (refus DOCTYPE/ENTITY, taille, XML mal
-  formé, coordonnées invalides), `trackStats` (distance, D+/D- par segment, altitudes extrêmes),
-  `din33466Hours`. Corpus synthétique seulement. Suite : nettoyage des métadonnées personnelles et
-  zone de confidentialité, simplification et profil, exports GPX/KML/GeoJSON.
+- **`packages/geo`** (depuis le 2026-10-29) : `parseGpx` (refus DOCTYPE/ENTITY, plus de 10 Mo, XML
+  mal formé, coordonnées invalides ; entités prédéfinies décodées à la main, le parseur n'en traite
+  aucune), `trackStats`, `din33466Hours`, `sanitizeSegments` (heures retirées, zone de
+  confidentialité `trimM` mesurée le long de la marche) et `toGpx` (GPX 1.1 sans heure, extension ni
+  appareil). Corpus synthétique seulement. Suite : simplification et profil, exports KML/GeoJSON,
+  puis le hook Directus qui enchaîne le tout au dépôt d'un GPX.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).

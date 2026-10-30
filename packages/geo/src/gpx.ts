@@ -19,8 +19,8 @@ export class GpxError extends Error {
   override name = 'GpxError'
 }
 
-/** Larger than any real day out (a 12 h track at 1 s is ~5 MB), small enough to parse in memory. */
-export const MAX_GPX_BYTES = 20 * 1024 * 1024
+/** 10 MB (docs/01): a 12 h track recorded every second is ~5 MB. */
+export const MAX_GPX_BYTES = 10 * 1024 * 1024
 
 // Entity declarations are the door to XXE and "billion laughs": a GPX never needs one.
 const DOCTYPE = /<!\s*(DOCTYPE|ENTITY)/i
@@ -39,8 +39,19 @@ const parser = new XMLParser({
 const asNodes = (value: unknown): Node[] =>
   Array.isArray(value) ? value.filter((v): v is Node => typeof v === 'object' && v !== null) : []
 
+// Entity processing is off in the parser (no DTD may expand), so the five predefined entities and
+// character references are decoded here, by hand: "Pic d&apos;Aurouze" must read as written.
+// Entity names are case-sensitive in XML, so `&LT;` stays as written.
+const PREDEFINED: Record<string, string> = { lt: '<', gt: '>', amp: '&', quot: '"', apos: "'" }
+const decode = (value: string): string =>
+  value.replace(/&(#x[0-9a-fA-F]+|#[0-9]+|lt|gt|amp|quot|apos);/g, (entity, ref: string) => {
+    if (ref[0] !== '#') return PREDEFINED[ref] as string
+    const code = ref[1] === 'x' ? parseInt(ref.slice(2), 16) : parseInt(ref.slice(1), 10)
+    return code <= 0x10ffff ? String.fromCodePoint(code) : entity
+  })
+
 const text = (value: unknown): string | undefined => {
-  if (typeof value === 'string') return value.trim() || undefined
+  if (typeof value === 'string') return decode(value).trim() || undefined
   if (typeof value === 'object' && value !== null && '#text' in value) return text(value['#text'])
   return undefined
 }
