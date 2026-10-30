@@ -1,0 +1,29 @@
+{
+  "name": "directus-extension-hook-publication",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Bloque la publication tant qu'une langue obligatoire n'est pas complète ; pose la date de première publication.",
+  "directus:extension": {
+    "type": "hook",
+    "path": "dist/index.js",
+    "source": "src/index.ts",
+    "host": "^12.0.0"
+  },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --target=node22 --legal-comments=none --outfile=dist/index.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.5.1",
+    "@vitest/coverage-v8": "^5.0.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.10.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.1"
+  }
+}
