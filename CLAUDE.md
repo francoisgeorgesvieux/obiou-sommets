@@ -80,9 +80,11 @@ Concrètement :
 - **`packages/geo`** (depuis le 2026-10-29) : `parseGpx` (refus DOCTYPE/ENTITY, plus de 10 Mo, XML
   mal formé, coordonnées invalides ; entités prédéfinies décodées à la main, le parseur n'en traite
   aucune), `trackStats`, `din33466Hours`, `sanitizeSegments` (heures retirées, zone de
-  confidentialité `trimM` mesurée le long de la marche) et `toGpx` (GPX 1.1 sans heure, extension ni
-  appareil). Corpus synthétique seulement. Suite : simplification et profil, exports KML/GeoJSON,
-  puis le hook Directus qui enchaîne le tout au dépôt d'un GPX.
+  confidentialité `trimM` mesurée le long de la marche), `simplify` (Douglas-Peucker en mètres,
+  itératif), `elevationProfile` (`{ d, z }` échantillonné, 500 points par défaut) et les exports
+  `toGpx`, `toGeoJson`, `toKml` (positions et altitudes seulement). Corpus synthétique seulement.
+  Suite : source d'altitude (baromètre, altimétrie IGN, Copernicus), puis le hook Directus qui
+  enchaîne le tout au dépôt d'un GPX.
 - Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
   `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
   du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
