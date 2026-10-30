@@ -83,8 +83,14 @@ Concrètement :
   confidentialité `trimM` mesurée le long de la marche), `simplify` (Douglas-Peucker en mètres,
   itératif), `elevationProfile` (`{ d, z }` échantillonné, 500 points par défaut) et les exports
   `toGpx`, `toGeoJson`, `toKml` (positions et altitudes seulement). Tests : corpus synthétique.
-  Suite : source d'altitude (baromètre, altimétrie IGN, Copernicus), puis le hook Directus qui
-  enchaîne le tout au dépôt d'un GPX.
+  Altitude (2026-10-30) : `ignAltitude` (RGE ALTI, lots de 150 points, 4 requêtes/s pour une limite
+  IGN de 5, -99999 → `null`), `copernicusAltitude` (Open-Meteo, Copernicus GLO-90, lots de 100) et
+  `bestAltitude` (IGN en France, Copernicus pour le reste et les trous) ; `fetch` injectable.
+  ⚠️ **Pas encore essayés contre les vrais services** : le réseau de la session cloud refuse
+  `data.geopf.fr` et `api.open-meteo.com` (403), la doc IGN n'était pas lisible non plus. Paramètres
+  IGN écrits de mémoire, à vérifier dès que le propriétaire aura ouvert ces domaines (demandé le
+  2026-10-30), puis mesurer le D+ du modèle de terrain contre celui de Strava sur les six traces.
+  Suite : le hook Directus qui enchaîne le tout au dépôt d'un GPX.
 - **Validé sur traces réelles le 2026-10-30** (autorisé par le propriétaire : ses activités Strava,
   lues par le MCP Strava, gardées hors du dépôt ; 6 sorties, 2 dans les Alpes et 4 en Corée, 2 500 à 20 000
   points à pleine résolution). Mesures, à réutiliser pour régler le hook :
