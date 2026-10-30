@@ -5,6 +5,8 @@ Extensions maison, copiées dans `/directus/extensions` à la construction de l'
 Prévues en phase 2 :
 
 - `hook-pipeline-gpx` (**fait**, 2026-10-30) : calculs et exports au dépôt d'un GPX ;
+- `hook-publication` (**fait**, 2026-10-30) : publication refusée tant que le français et l'anglais
+  (ou les langues marquées `obligatoire`) ne sont pas complets ; date de première publication ;
 - `interface-import-gpx` : aperçu carte et profil dans le formulaire itinéraire ;
 - `interface-position-carte` : sélecteur de position avec altitude proposée.
 

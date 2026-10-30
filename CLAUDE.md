@@ -61,8 +61,8 @@ Concrètement :
   base neuve, `schema apply --dry-run` planifie 33 collections (30 + 3 dossiers), 358 créations,
   aucune suppression. Déployé sur `staging` le 19 sept., fusionné vers `main` par Claude le
   2026-10-30 (PR #1 : ajout pur), appliqué en production le jour même (`[obiou] schema apply` puis
-  serveur démarré). Reste à faire : `obligatoire` vrai pour `fr` et `en` dans `languages` (une
-  donnée, pas le schéma) ; Claude n'a pas d'accès à l'admin, le hook de publication le posera.
+  serveur démarré). `obligatoire` dans `languages` : tant qu'aucune langue n'est cochée, le hook de
+  publication exige `fr` et `en` (un `languages` neuf reçoit `false`, mesuré) ; rien à poser à la main.
 - **Pièges Directus 12 mesurés le 2026-09-19** :
   - **licence** : 25 collections maximum en « Core » (sans clé), tables de traduction et de liaison
     comprises (dossiers exclus). Le schéma en a 30 : il faut la licence Innovation Grant, que
@@ -112,6 +112,17 @@ Concrètement :
   périmé (voir `apps/cms/extensions/README.md`). Avec une altitude de baromètre, aucun appel réseau ;
   un service d'altitude en panne ou mal appelé donne l'anomalie `altitude_injoignable` et le GPX lissé.
   Le format FIT reste à faire (D5).
+- **Hook Directus `hook-publication`** (2026-10-30, `apps/cms/extensions/hook-publication`) : refuse
+  (400 `INVALID_PAYLOAD`, message qui nomme la langue et les champs) de publier un sommet, un
+  itinéraire, un conseil ou une page tant qu'une langue obligatoire manque, est en `brouillon` ou a
+  un champ requis vide (`REQUIRED_FIELDS` dans `src/rules.ts`, d'après docs/05) ; garde aussi les
+  traductions d'un contenu déjà publié (vider ou supprimer l'anglais est refusé) ; pose
+  `date_publication` à la première publication. Langues obligatoires : celles où `obligatoire` est
+  vrai, sinon `fr` et `en`. **Essayé le 2026-10-30 sur un Directus 12.3.1 local** (schéma réduit à
+  `languages`, `itineraires`, `itineraires_translations`, `exports`), dix cas par l'API, dont la forme
+  `{create, update, delete}` que l'admin envoie avec `languages_code: { code }`. **Limite connue** :
+  modifier directement une ligne de `…_translations` (hors du formulaire parent) n'est pas gardé ; le
+  rôle « Agent IA » ne doit donc pas recevoir d'écriture sur les tables de traduction.
 - **Validé sur traces réelles le 2026-10-30** (autorisé par le propriétaire : ses activités Strava,
   lues par le MCP Strava, gardées hors du dépôt ; 6 sorties, 2 dans les Alpes et 4 en Corée, 2 500 à 20 000
   points à pleine résolution). Mesures, à réutiliser pour régler le hook :
@@ -163,7 +174,7 @@ par Claude une fois verte (sauf exception ci-dessus). Ne plus pousser `main:stag
 - **Langues (décidées le 2026-09-18)** : français (source) et anglais, **tous deux obligatoires
   pour publier**, coréen à prévoir plus tard (facultatif au début). Tables `…_translations` de
   Directus, collection `languages` avec un champ `obligatoire`. Directus ne sait pas exiger une
-  langue : un hook de la phase 2 bloquera la publication s'il manque une traduction obligatoire.
+  langue : le hook `hook-publication` (2026-10-30) bloque la publication s'il manque une traduction obligatoire.
   Noms propres non traduits, adresses anglaises sous `/en`. Rôle Contributeur : plus tard.
 - **Maquettes** publiées (45 écrans, lots 1 à 4) : https://claude.ai/code/artifact/bb79abd1-e08c-4cf9-834a-017c95d230ec.
   Les artboards sources sont dans `design/*.dc.html`. Si le canvas a été modifié en ligne, la
