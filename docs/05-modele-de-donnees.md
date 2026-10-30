@@ -75,7 +75,7 @@ remplis. Aujourd'hui : `fr` et `en`. Directus ne sait pas exiger une langue : un
 Elle fait partie des extensions de la phase 2. Tant qu'elle n'existe pas, la règle est à tenir à la
 main.
 
-**Chaque traduction a son statut**, `brouillon` ou `publie`. Une langue obligatoire doit être
+**Chaque traduction a son statut**, `brouillon` ou `publie` (par défaut). Une langue obligatoire doit être
 publiée pour que le contenu le soit. Une langue facultative, comme le coréen au début, apparaît dès
 que sa traduction est publiée ; sinon, le sélecteur de langue renvoie vers la version française.
 Ce statut par traduction permet aussi à l'agent IA de préparer une traduction en brouillon sur un
@@ -334,8 +334,8 @@ Les guides (`/guides/importer-une-trace`, `/guides/cotations`…) sont des pages
 ### Fichiers : champs `credit` et `alt` sur `directus_files`
 
 Chaque photo porte un **crédit** (« © l'auteur ») ; la maquette bloque l'enregistrement tant qu'une
-photo n'en a pas. Elle porte aussi un **texte alternatif par langue** (`alt`, au format
-`{ "fr": …, "en": … }`), indispensable à l'accessibilité. Directus ne sait pas traduire les
+photo n'en a pas. Elle porte aussi un **texte alternatif par langue** (`alt`, une liste
+`[{ "langue": "fr", "texte": … }]`), indispensable à l'accessibilité. Directus ne sait pas traduire les
 fichiers, d'où ce champ unique. Trois dossiers : `gpx-prives` 🔒 (GPX sources et bruts), `exports`, `photos`.
 
 ## Qui écrit quoi
