@@ -16,8 +16,10 @@ const EU_WEST = { "europe-west4-drams3a": 1 };
 export default defineRailway((ctx) => {
   const prod = ctx.environment === "production";
   const branch = prod ? "main" : "staging";
-  // Staging sleeps when idle to keep the bill down.
-  const idle = prod ? {} : { sleepApplication: true };
+  // Every service sleeps when idle, production included (owner's decision, 2026-10-29): the
+  // sites have almost no traffic yet, and a hard usage limit stopped the whole account that day.
+  // Revisit when the public site carries real traffic. Not the cron backup: it runs and exits.
+  const idle = { sleepApplication: true };
 
   const timescaledbVolume = volume("timescaledb-volume", { alerts: { usage: { "100": {}, "80": {}, "95": {} } }, allowOnlineResize: true, region: "europe-west4-drams3a", sizeMB: 5000 });
   const obiouSommetsFiles = bucket("obiou-sommets-files", { region: "ams" });
@@ -29,6 +31,7 @@ export default defineRailway((ctx) => {
     replicas: EU_WEST,
     networking: { privateNetworkEndpoint: "timescaledb" },
     volumeMounts: { "/var/lib/postgresql/data": timescaledbVolume },
+    deploy: { ...idle },
     env: { DATABASE_PUBLIC_URL: preserve(), DATABASE_URL: preserve(), NO_TS_TUNE: preserve(), PGDATA: preserve(), PGDATABASE: preserve(), PGHOST: preserve(), PGPASSWORD: preserve(), PGPORT: preserve(), PGUSER: preserve(), POSTGRES_DB: preserve(), POSTGRES_PASSWORD: preserve(), POSTGRES_USER: preserve(), RAILWAY_RUN_UID: preserve(), SSL_CERT_DAYS: preserve() },
   });
 
