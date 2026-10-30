@@ -8,3 +8,4 @@ export { sanitizeSegments, type PublicPoint, type SanitizeOptions } from './priv
 export { toGeoJson, toKml } from './export-geo'
 export { elevationProfile, type ProfilePoint } from './profile'
 export { simplify } from './simplify'
+export { AltitudeError, bestAltitude, copernicusAltitude, ignAltitude, type AltitudeClientOptions, type AltitudeLookup, type HttpGet } from './altitude'
