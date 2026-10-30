@@ -86,7 +86,7 @@ Concrètement :
   Suite : source d'altitude (baromètre, altimétrie IGN, Copernicus), puis le hook Directus qui
   enchaîne le tout au dépôt d'un GPX.
 - **Validé sur traces réelles le 2026-10-30** (autorisé par le propriétaire : ses activités Strava,
-  lues par le MCP Strava, gardées hors du dépôt ; 6 sorties, 3 Alpes et 3 Corée, 2 500 à 20 000
+  lues par le MCP Strava, gardées hors du dépôt ; 6 sorties, 2 dans les Alpes et 4 en Corée, 2 500 à 20 000
   points à pleine résolution). Mesures, à réutiliser pour régler le hook :
   - **distance** : identique au flux `distance` de Strava à 0,1 % près sur 5 traces sur 6. La
     sixième (enregistrement ancien, 20 000 points) compte **6 % de plus** : bruit GPS à vitesse de
