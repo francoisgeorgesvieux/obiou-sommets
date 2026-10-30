@@ -1,1 +1,8 @@
 **/README.md
+# Extensions ship their built bundle only.
+extensions/*/node_modules
+extensions/*/src
+extensions/*/test
+extensions/*/coverage
+extensions/*/*.config.*
+extensions/*/tsconfig.json

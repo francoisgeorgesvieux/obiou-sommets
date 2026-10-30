@@ -98,7 +98,20 @@ Concrètement :
   `data.geopf.fr` et `api.open-meteo.com` (403), la doc IGN n'était pas lisible non plus. Paramètres
   IGN écrits de mémoire, à vérifier dès que le propriétaire aura ouvert ces domaines (demandé le
   2026-10-30), puis mesurer le D+ du modèle de terrain contre celui de Strava sur les six traces.
-  Suite : le hook Directus qui enchaîne le tout au dépôt d'un GPX.
+- **Hook Directus `hook-pipeline-gpx`** (2026-10-30, `apps/cms/extensions/hook-pipeline-gpx`) : à la
+  création ou à l'enregistrement d'un itinéraire qui touche `gpx_source`, `masquer_extremites` ou
+  `source_altitude_forcee`, lance `processTrace` **en arrière-plan** (l'enregistrement n'attend pas),
+  écrit les champs calculés et `calcule_le`, remplace les trois exports (GPX, KML, GeoJSON simplifiés à
+  2 m, dossier `exports` créé au besoin, ancien fichier supprimé) ; GPX illisible → anomalie
+  `gpx_invalide`, champs précédents gardés ; GPX retiré → champs et exports effacés ; une anomalie sur
+  un itinéraire `publie` le repasse `en_relecture`. Écritures sans événements (`emitEvents: false`),
+  donc pas de boucle. **Essayé de bout en bout le 2026-10-30 sur un Directus 12.3.1 local** (schéma
+  réduit à `itineraires` + `exports` + dossiers) avec une vraie trace : géométrie PostGIS
+  `ST_LineString` SRID 4326, exports sans `<time>`, remplacement sans fichier orphelin. Bundle
+  esbuild **commité** (`dist/`, l'image `cms` ne voit pas `packages/geo`) ; la CI refuse un bundle
+  périmé (voir `apps/cms/extensions/README.md`). Avec une altitude de baromètre, aucun appel réseau ;
+  un service d'altitude en panne ou mal appelé donne l'anomalie `altitude_injoignable` et le GPX lissé.
+  Le format FIT reste à faire (D5).
 - **Validé sur traces réelles le 2026-10-30** (autorisé par le propriétaire : ses activités Strava,
   lues par le MCP Strava, gardées hors du dépôt ; 6 sorties, 2 dans les Alpes et 4 en Corée, 2 500 à 20 000
   points à pleine résolution). Mesures, à réutiliser pour régler le hook :
@@ -182,7 +195,7 @@ session cloud, corepack échoue (`pnpm.cjs` introuvable, 2026-10-29) : `npx -y p
      d'avant le push (`github.event.before`) ou la base de la PR ; en local, `origin/main`.
   Un package n'est contrôlé que s'il a `@vitest/coverage-v8` et un `vitest.config.ts` avec
   `coverage.include` (sans `include`, un fichier que rien n'importe est invisible) : copier celui de
-  `packages/geo`. Les deux packages actuels sont contrôlés ; le script signale ceux qui ne le sont pas.
+  `packages/geo`. Les packages actuels (dont les extensions Directus) sont contrôlés ; le script signale ceux qui ne le sont pas.
 - **Tests de `apps/web`**, deux projets Vitest (`apps/web/vitest.config.ts`) :
   - `test/unit/` (Node) : routes Nitro et `server/utils`, servies par une **vraie app h3**
     (`fetchRoute`). Hors build, les auto-imports de Nitro n'existent pas : `test/unit/nitro.ts` les

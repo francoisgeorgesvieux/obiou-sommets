@@ -46,5 +46,12 @@ jobs:
           BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: node scripts/patch-coverage.mjs --base "$BASE" --min 85
       - run: pnpm build
+      # The cms image is built from apps/cms alone, so Directus extensions ship their bundle in git.
+      - name: Directus extension bundles up to date
+        run: |
+          for ext in apps/cms/extensions/*/; do
+            [ -f "$ext/package.json" ] && pnpm --dir "$ext" build
+          done
+          git diff --exit-code -- apps/cms/extensions || { echo "::error::rebuild the extension bundle (pnpm --dir <extension> build) and commit dist/"; exit 1; }
       - name: Backup scripts syntax
         run: sh -n infra/backup/backup.sh && bash -n infra/backup/restore-test.sh
