@@ -85,7 +85,15 @@ Concrètement :
   `toGpx`, `toGeoJson`, `toKml` (positions et altitudes seulement). Tests : corpus synthétique.
   Altitude (2026-10-30) : `ignAltitude` (RGE ALTI, lots de 150 points, 4 requêtes/s pour une limite
   IGN de 5, -99999 → `null`), `copernicusAltitude` (Open-Meteo, Copernicus GLO-90, lots de 100) et
-  `bestAltitude` (IGN en France, Copernicus pour le reste et les trous) ; `fetch` injectable.
+  `fetch` injectable. **`processTrace`** enchaîne tout pour le hook : nettoyage et zone masquée,
+  anomalies (sauts de plus de 500 m, plusieurs segments, emprise de plus de 150 km, altitude absente
+  ou injoignable, IGN complété par Copernicus), choix de l'altitude, statistiques sur la trace
+  complète, simplification (5 m), profil, kilomètre-effort (km + D+/100). Altitude automatique :
+  celle du GPX si 95 % des points l'ont **et** qu'elle est lisse (`altitudeNoiseM`, médiane des
+  |différences secondes| ≤ 0,5 m : 0 à 0,2 m mesuré sur un baromètre, 1,6 m dès 1 m de bruit) ;
+  sinon IGN en France (interrogé tous les 10 m puis interpolé), Copernicus ailleurs ; GPX lissé
+  (moyenne sur 21 points) si le modèle est injoignable. Seuils de D+ : 1 m baromètre, 5 m GPS
+  lissé, 2 m modèle de terrain (**non mesuré**, à revoir avec le réseau).
   ⚠️ **Pas encore essayés contre les vrais services** : le réseau de la session cloud refuse
   `data.geopf.fr` et `api.open-meteo.com` (403), la doc IGN n'était pas lisible non plus. Paramètres
   IGN écrits de mémoire, à vérifier dès que le propriétaire aura ouvert ces domaines (demandé le

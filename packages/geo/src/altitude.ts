@@ -92,23 +92,3 @@ export const copernicusAltitude = (options: AltitudeClientOptions = {}): Altitud
     },
     options,
   )
-
-// Metropolitan France and Corsica, generously: a point outside cannot be in RGE ALTI.
-const FRANCE = { south: 41.2, north: 51.2, west: -5.3, east: 9.7 }
-const inFrance = (p: LonLat) => p.lat >= FRANCE.south && p.lat <= FRANCE.north && p.lon >= FRANCE.west && p.lon <= FRANCE.east
-
-/**
- * IGN where it has data, Copernicus everywhere else. A trace entirely outside France never
- * calls the IGN; a trace across a border fills the IGN gaps from Copernicus.
- */
-export function bestAltitude(ign: AltitudeLookup, copernicus: AltitudeLookup): AltitudeLookup {
-  return async (points) => {
-    const result: (number | null)[] = points.some(inFrance) ? await ign(points) : points.map(() => null)
-    const missing = result.flatMap((z, i) => (z === null ? [i] : []))
-    if (missing.length) {
-      const filled = await copernicus(missing.map((i) => points[i] as LonLat))
-      missing.forEach((i, k) => (result[i] = filled[k] as number | null))
-    }
-    return result
-  }
-}

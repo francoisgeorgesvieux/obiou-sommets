@@ -220,7 +220,9 @@ Points d'attention :
      (30 à 90 m de résolution, moins précis sur les crêtes). Fournisseur à valider en phase 2.
 - **Zone de confidentialité** : option pour retirer les 200 premiers et derniers mètres quand une
   trace part d'un domicile ou d'un hébergement.
-- **D+/D-** : cumul avec un seuil d'hystérésis (environ 5 m) pour ignorer les micro-variations.
+- **D+/D-** : cumul avec un seuil d'hystérésis pour ignorer les micro-variations, selon la source
+  d'altitude : 1 m sur une altitude déjà lisse (baromètre), 5 m sur une altitude GPS lissée, 2 m sur un
+  modèle de terrain (mesures sur traces réelles du 30 octobre 2026, voir CLAUDE.md).
 - **Durée estimée** : formule DIN 33466 (300 m/h en montée, 500 m/h en descente, 4 km/h à plat),
   modifiable à la main par l'éditeur.
 - **Vie privée** : le GPX d'un éditeur contient souvent horodatages, fréquence cardiaque et modèle de

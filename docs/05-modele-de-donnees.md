@@ -196,7 +196,7 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | ⚙️ `trace_simplifiee` | LineString | | pour la carte (Douglas-Peucker) |
 | ⚙️ `profil` | JSON | | points `{ d, z }` échantillonnés, distance et altitude en mètres |
 | ⚙️ `distance_m` | entier | | |
-| ⚙️ `denivele_pos_m`, `denivele_neg_m` | entier | | seuil d'hystérésis d'environ 5 m |
+| ⚙️ `denivele_pos_m`, `denivele_neg_m` | entier | | seuil d'hystérésis selon la source d'altitude : 1 m (baromètre), 5 m (GPS lissé), 2 m (modèle de terrain) |
 | ⚙️ `altitude_min_m`, `altitude_max_m` | entier | | |
 | ⚙️ `duree_calculee_min` | entier | | DIN 33466 |
 | ⚙️ `effort_km` | décimal | | kilomètre-effort, voir question 2 |
