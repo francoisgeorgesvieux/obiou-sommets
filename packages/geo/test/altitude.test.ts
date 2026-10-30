@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { AltitudeError, bestAltitude, copernicusAltitude, ignAltitude, type HttpGet } from '../src'
+import { AltitudeError, copernicusAltitude, ignAltitude, type HttpGet } from '../src'
 
 const reply = (body: unknown, status = 200) => ({ ok: status < 400, status, json: async () => body })
 const line = (n: number, lat = 44.7) => Array.from({ length: n }, (_, i) => ({ lat, lon: 5.8 + i * 1e-4 }))
@@ -76,28 +76,5 @@ describe('copernicusAltitude', () => {
     expect(await pending).toHaveLength(200)
     expect(fetch).toHaveBeenCalledTimes(2)
     vi.useRealTimers()
-  })
-})
-
-describe('bestAltitude', () => {
-  it('never calls the IGN for a trace entirely outside France', async () => {
-    const ign = vi.fn(async () => [])
-    const copernicus = vi.fn(async (pts: readonly unknown[]) => pts.map(() => 1950))
-    expect(await bestAltitude(ign, copernicus)(line(2, 33.36))).toEqual([1950, 1950])
-    expect(ign).not.toHaveBeenCalled()
-  })
-
-  it('fills only the IGN gaps from Copernicus, in order', async () => {
-    const points = line(4)
-    const ign = vi.fn(async () => [1000, null, 1002, null])
-    const copernicus = vi.fn(async (pts: readonly unknown[]) => pts.map((_, i) => 2000 + i))
-    expect(await bestAltitude(ign, copernicus)(points)).toEqual([1000, 2000, 1002, 2001])
-    expect(copernicus).toHaveBeenCalledWith([points[1], points[3]])
-  })
-
-  it('does not call Copernicus when the IGN covered every point', async () => {
-    const copernicus = vi.fn(async () => [])
-    expect(await bestAltitude(async () => [1, 2], copernicus)(line(2))).toEqual([1, 2])
-    expect(copernicus).not.toHaveBeenCalled()
   })
 })
