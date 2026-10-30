@@ -222,8 +222,13 @@ Projet `obiou-sommets` (`0081f1e1-c1bc-4fb5-9f4f-8b599e56aba4`), offre Hobby.
 | `backup` (`7c632da2…`) | racine `/infra/backup`, cron `0 3 * * *`, redémarrage `NEVER` |
 | buckets | `obiou-sommets-files` (uploads Directus) et `obiou-sommets-backups`, région `ams` |
 
-Staging (`2ee34906-8acc-4538-a3f8-8789f4a1d7ef`) : copie de la production, branche `staging`, `web` et
-`cms` en veille quand inactifs, **pas de service `backup`**. Domaines :
+Staging (`2ee34906-8acc-4538-a3f8-8789f4a1d7ef`) : copie de la production, branche `staging`,
+**pas de service `backup`**.
+
+**Veille (Serverless) sur tous les services sauf `backup`, production comprise** (décision du
+propriétaire, 2026-10-29) : le 29 octobre, une limite stricte d'usage (environ 10 $) a arrêté tout le
+compte Railway, pour un usage mesuré d'environ 11 $/mois sur les deux projets. Premier appel après
+la veille : quelques secondes, parfois un 502. À revoir quand le site public aura du trafic. Domaines :
 `web-staging-6028.up.railway.app`, `cms-staging-5f20.up.railway.app`.
 ⚠️ La copie d'environnement a repris la même valeur de `POSTGRES_PASSWORD` que la production (bases
 distinctes, aucune exposée publiquement). Changer ce mot de passe demande un `ALTER USER` dans la
