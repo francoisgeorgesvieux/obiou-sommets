@@ -1,6 +1,7 @@
 packages:
   - apps/web
   - packages/*
+  - apps/cms/extensions/*
 # pnpm 12 refuses unreviewed dependency install scripts.
 allowBuilds:
   esbuild: true

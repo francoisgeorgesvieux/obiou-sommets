@@ -2,6 +2,8 @@ node_modules/
 .nuxt/
 .output/
 dist/
+# Directus loads the bundle; the cms image cannot build it (see the extension's eslint.config.js).
+!apps/cms/extensions/*/dist/
 .env
 .env.*
 !.env.example
