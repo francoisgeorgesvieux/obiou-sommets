@@ -36,9 +36,12 @@ produit** (brainstorming, priorisation). Le site n'a qu'un utilisateur pour l'in
 Concrètement :
 - **Claude vérifie lui-même** : tests unitaires et `pnpm check`, Playwright (`pnpm e2e`) en local,
   Directus local pour tout changement de schéma (voir *Tester Directus en local* plus bas).
-- **Claude ne fusionne pas vers `main`** (= production) : il ouvre la PR, la mène au vert et la
-  laisse au propriétaire, qui la fusionne après son lot de tests. `staging` reçoit les branches de
-  travail librement.
+- **Claude fusionne lui-même vers `main`** (= production) une fois la CI verte, et le dit au
+  propriétaire en une ligne (règle du 2026-10-30, qui remplace « le propriétaire fusionne »).
+  **Exception** : quand Claude juge qu'un changement est assez important pour mériter un lot de
+  tests du propriétaire avant la production (refonte d'un parcours, migration de données
+  irréversible, sécurité), il le lui dit, attend ses tests, puis fusionne. `staging` reçoit les
+  branches de travail librement.
 - **Restent au propriétaire** : les secrets, la facturation, les choix produit, tout ce qui part
   hors du projet, et les données personnelles (GPX réels publiés dans un dépôt public).
 - La session cloud de Claude **ne joint pas** `*.up.railway.app` ni `sommets.obiou.eu` (proxy
@@ -57,8 +60,8 @@ Concrètement :
   le 19 sept. sur un Directus 12.3.1 local (appliqué par moitiés, idempotent, données gardées) et
   **revérifié par Claude le 2026-10-29** à la place de la relecture prévue dans l'admin : sur une
   base neuve, `schema apply --dry-run` planifie 33 collections (30 + 3 dossiers), 358 créations,
-  aucune suppression. Déployé sur `staging` le 19 sept. ; **PR vers `main` ouverte par Claude,
-  fusion par le propriétaire** après son lot de tests. Reste à faire **une fois Railway relancé** :
+  aucune suppression. Déployé sur `staging` le 19 sept., fusionné vers `main` par Claude le
+  2026-10-30 (PR #1 : ajout pur, aucune donnée en production). Reste à faire **une fois Railway relancé** :
   cocher `obligatoire` pour `fr` et `en` dans `languages` (c'est une donnée, pas le schéma), en
   staging puis en production.
 - **Pièges Directus 12 mesurés le 2026-09-19** :
@@ -91,8 +94,8 @@ le 2026-09-17, sauvegardes des 15, 16 et 17 vertes et restauration réelle réus
 
 **Rappels de méthode** : secrets posés par le propriétaire uniquement (script `set-cms-secrets.sh`),
 jamais lus par Claude ; toujours `railway config plan` avant `apply`. **Branches** : une branche de
-travail par sujet, poussée sur `staging` pour l'essayer en ligne, puis PR vers `main` que le
-propriétaire fusionne. Ne plus pousser `main:staging` tant que `staging` a de l'avance (refusé).
+travail par sujet, poussée sur `staging` pour l'essayer en ligne, puis PR vers `main`, fusionnée
+par Claude une fois verte (sauf exception ci-dessus). Ne plus pousser `main:staging` tant que `staging` a de l'avance (refusé).
 
 ## Décisions
 
