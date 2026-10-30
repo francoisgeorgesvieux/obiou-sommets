@@ -82,12 +82,29 @@ Concrètement :
   aucune), `trackStats`, `din33466Hours`, `sanitizeSegments` (heures retirées, zone de
   confidentialité `trimM` mesurée le long de la marche), `simplify` (Douglas-Peucker en mètres,
   itératif), `elevationProfile` (`{ d, z }` échantillonné, 500 points par défaut) et les exports
-  `toGpx`, `toGeoJson`, `toKml` (positions et altitudes seulement). Corpus synthétique seulement.
+  `toGpx`, `toGeoJson`, `toKml` (positions et altitudes seulement). Tests : corpus synthétique.
   Suite : source d'altitude (baromètre, altimétrie IGN, Copernicus), puis le hook Directus qui
   enchaîne le tout au dépôt d'un GPX.
-- Demander au propriétaire un export de quelques GPX réels (Alpes + Corée) pour le corpus de tests de
-  `packages/geo`. ⚠️ Le dépôt est **public** : un GPX commité en fixture est publié. Décider avec lui
-  du nettoyage avant commit (horodatages décalés, cardio et appareil retirés, départs sensibles).
+- **Validé sur traces réelles le 2026-10-30** (autorisé par le propriétaire : ses activités Strava,
+  lues par le MCP Strava, gardées hors du dépôt ; 6 sorties, 2 dans les Alpes et 4 en Corée, 2 500 à 20 000
+  points à pleine résolution). Mesures, à réutiliser pour régler le hook :
+  - **distance** : identique au flux `distance` de Strava à 0,1 % près sur 5 traces sur 6. La
+    sixième (enregistrement ancien, 20 000 points) compte **6 % de plus** : bruit GPS à vitesse de
+    marche, que Strava lisse. Un lissage léger (moyenne glissante de 5 points) le corrige mais retire
+    0,5 à 2 % aux traces propres : pas de lissage par défaut, à revoir si d'autres traces le montrent ;
+  - **D+ : le seuil dépend de la source d'altitude.** Sur les altitudes de Strava (déjà lissées :
+    baromètre ou modèle de terrain), un seuil de **1 m** retrouve le D+ de Strava à 1 % près (3 % sur
+    le sentier plat) ; le seuil par défaut de 5 m le sous-estime de 1 à 10 % en montagne et de **69 %** sur un
+    sentier côtier presque plat (62 m au lieu de 198). 5 m reste fait pour une altitude GPS brute.
+    Le hook choisit donc le seuil selon la source (petit seuil après lissage ou modèle de terrain) ;
+  - **ordre du pipeline** : statistiques sur la trace complète nettoyée, **avant** `simplify`.
+    Douglas-Peucker est en 2D : à 5 m il retire 2 à 8 % de la distance et 1 à 6 % du D+ en montagne.
+    La trace simplifiée sert à l'affichage et au téléchargement (un GPX pleine résolution pèse
+    jusqu’à 1,4 Mo ; 40 à 380 points à 5 m) ;
+  - zone de confidentialité de 200 m : retire bien 400 m (deux bouts), aucune heure exportée.
+  ⚠️ Le dépôt est **public** : aucune trace réelle, coordonnée ou nom de lieu de départ n'y entre
+  sans décision du propriétaire. Les traces « Santé »
+  (Apple) ne sont pas joignables depuis la session : rien d'exporté dans le dossier partagé.
 - `packages/domain` et `db/views` n'existent pas encore (prévus en phase 1, reportés) : les créer
   avec les collections.
 
