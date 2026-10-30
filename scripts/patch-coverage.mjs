@@ -17,7 +17,8 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const WORKSPACE_GLOBS = ['apps', 'packages']
+// Same directories as pnpm-workspace.yaml.
+const WORKSPACE_GLOBS = ['apps', 'packages', 'apps/cms/extensions']
 const SOURCE_FILE = /\.(ts|mts|js|mjs|vue)$/
 
 function arg(name, fallback) {

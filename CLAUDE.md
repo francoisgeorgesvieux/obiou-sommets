@@ -195,7 +195,7 @@ session cloud, corepack échoue (`pnpm.cjs` introuvable, 2026-10-29) : `npx -y p
      d'avant le push (`github.event.before`) ou la base de la PR ; en local, `origin/main`.
   Un package n'est contrôlé que s'il a `@vitest/coverage-v8` et un `vitest.config.ts` avec
   `coverage.include` (sans `include`, un fichier que rien n'importe est invisible) : copier celui de
-  `packages/geo`. Les deux packages actuels sont contrôlés ; le script signale ceux qui ne le sont pas.
+  `packages/geo`. Les packages actuels (dont les extensions Directus) sont contrôlés ; le script signale ceux qui ne le sont pas.
 - **Tests de `apps/web`**, deux projets Vitest (`apps/web/vitest.config.ts`) :
   - `test/unit/` (Node) : routes Nitro et `server/utils`, servies par une **vraie app h3**
     (`fetchRoute`). Hors build, les auto-imports de Nitro n'existent pas : `test/unit/nitro.ts` les
