@@ -32,7 +32,9 @@ export default defineRailway((ctx) => {
     networking: { privateNetworkEndpoint: "timescaledb" },
     volumeMounts: { "/var/lib/postgresql/data": timescaledbVolume },
     deploy: { ...idle },
-    env: { DATABASE_PUBLIC_URL: preserve(), DATABASE_URL: preserve(), NO_TS_TUNE: preserve(), PGDATA: preserve(), PGDATABASE: preserve(), PGHOST: preserve(), PGPASSWORD: preserve(), PGPORT: preserve(), PGUSER: preserve(), POSTGRES_DB: preserve(), POSTGRES_PASSWORD: preserve(), POSTGRES_USER: preserve(), RAILWAY_RUN_UID: preserve(), SSL_CERT_DAYS: preserve() },
+    // SLEEP_APPLIED_AT: no-op variable set 2026-11-23 to force a real deploy. The 2026-10-30
+    // restart was a "redeploy", which reuses the old config snapshot and ignored the sleep setting.
+    env: { DATABASE_PUBLIC_URL: preserve(), DATABASE_URL: preserve(), NO_TS_TUNE: preserve(), PGDATA: preserve(), PGDATABASE: preserve(), PGHOST: preserve(), PGPASSWORD: preserve(), PGPORT: preserve(), PGUSER: preserve(), POSTGRES_DB: preserve(), POSTGRES_PASSWORD: preserve(), POSTGRES_USER: preserve(), RAILWAY_RUN_UID: preserve(), SLEEP_APPLIED_AT: preserve(), SSL_CERT_DAYS: preserve() },
   });
 
   const web = service("web", {
