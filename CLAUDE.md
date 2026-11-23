@@ -289,7 +289,14 @@ Staging (`2ee34906-8acc-4538-a3f8-8789f4a1d7ef`) : copie de la production, branc
 **Veille (Serverless) sur tous les services sauf `backup`, production comprise** (décision du
 propriétaire, 2026-10-29) : le 29 octobre, une limite stricte d'usage (environ 10 $) a arrêté tout le
 compte Railway, pour un usage mesuré d'environ 11 $/mois sur les deux projets. Premier appel après
-la veille : quelques secondes, parfois un 502. À revoir quand le site public aura du trafic. Domaines :
+la veille : quelques secondes, parfois un 502. À revoir quand le site public aura du trafic.
+**Piège mesuré le 2026-11-23** : un `redeploy` (bouton du dashboard, outil MCP) reprend l'instantané de
+config du déploiement copié, donc **sans la veille** si elle a été activée après. Les bases relancées le
+30 octobre par redeploy sont restées éveillées trois semaines. Seul un vrai déploiement applique la
+veille (variable sans effet `SLEEP_APPLIED_AT` posée pour ça sur TimescaleDB). Autre piège : la
+mémoire « moyenne » des métriques ne compte que les minutes éveillées ; le temps éveillé se lit dans
+les logs (`Starting Container` / `Stopping Container`). Le cms dort ~95 % du temps, réveillé par des
+robots scanneurs. Domaines :
 `web-staging-6028.up.railway.app`, `cms-staging-5f20.up.railway.app`.
 ⚠️ La copie d'environnement a repris la même valeur de `POSTGRES_PASSWORD` que la production (bases
 distinctes, aucune exposée publiquement). Changer ce mot de passe demande un `ALTER USER` dans la
