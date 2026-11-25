@@ -4,6 +4,9 @@
 > Hypothèse de rythme : **une personne + Claude Code, environ 2 jours par semaine**. À plein temps,
 > divise les durées par 2 à 2,5. Le contenu (reconnaissance terrain, saisie, photos) est compté à part :
 > c'est le vrai goulot.
+>
+> **Depuis le 2026-11-25**, l'ordre des features fait foi dans [ROADMAP.md](../ROADMAP.md) ; ce
+> document garde le calendrier par phases et les critères de sortie.
 
 ## Vue calendrier
 

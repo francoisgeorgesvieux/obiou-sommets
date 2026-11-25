@@ -50,6 +50,9 @@ Concrètement :
 
 ## ▶ Prochaine session : reprendre ici
 
+**Priorités : [ROADMAP.md](ROADMAP.md)** (liste ordonnée par le propriétaire, depuis le 2026-11-25).
+Aucune feature ne se code sans sa fiche validée dans `docs/fiches/` (modèle `docs/fiches/_modele.md`).
+
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
 - **Modèle de données validé le 2026-09-18**, langues comprises :
   [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi.
