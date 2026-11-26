@@ -41,7 +41,7 @@ Objectif de ce bloc : **une vraie sortie, saisie dans l'admin, visible et télé
 
 | # | Feature | Problème et valeur | Statut |
 |---|---|---|---|
-| 1 | **Sorties sans sommet** (sommet facultatif, catégorie, région sur l'itinéraire, adresse `/itineraires/…`) | Le modèle suppose un sommet par itinéraire ; un sentier côtier ne se saisit pas proprement. À trancher avant le contenu et les pages, qui en dépendent. | [fiche à valider](docs/fiches/01-sorties-sans-sommet.md) |
+| 1 | **Sorties sans sommet** (sommet facultatif, catégorie, région sur l'itinéraire, adresse `/itineraires/…`) | Le modèle suppose un sommet par itinéraire ; un sentier côtier ne se saisit pas proprement. À trancher avant le contenu et les pages, qui en dépendent. | [prêt](docs/fiches/01-sorties-sans-sommet.md) (fiche validée le 2026-11-26) |
 | 2 | **Lecture publique du contenu** (vues SQL `db/views`, rôle Postgres en lecture seule, `packages/domain`) | Le site ne sait rien lire. C'est le socle de toutes les pages et du MCP public, et l'invariant « le site ne dépend pas de Directus à l'exécution ». | à cadrer |
 | 3 | **Fiche itinéraire** (trace sur la carte, profil, statistiques, infos pratiques, date de la sortie) | La page qui porte la valeur : « est-ce que cette sortie est pour moi ? ». Le pipeline GPX calcule déjà tout ce qu'elle affiche. | à cadrer |
 | 4 | **Téléchargement de la trace** (GPX, KML, GeoJSON, compteur, guide d'import) | La promesse du site : trouver une sortie et télécharger sa trace en moins d'une minute. Les exports existent déjà dans le bucket. | à cadrer |
@@ -88,3 +88,5 @@ Pas des features, mais à faire au fil de l'eau :
   les Alpes).
 - Lancement mi-avril 2027 maintenu, sans pression : usage personnel d'abord.
 - Périmètre élargi à toutes les sorties intéressantes, pas seulement les sommets (fiche n° 1).
+- Fiche n° 1 validée le 2026-11-26 : catégories retenues, grands sentiers plus tard, lecture
+  ouverte à tous sans contributions externes, nom « Sommets » gardé.

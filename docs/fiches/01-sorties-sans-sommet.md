@@ -1,6 +1,6 @@
 # Fiche : Publier aussi les sorties sans sommet
 
-> Statut : **à valider** · Rédigée le 2026-11-25 · Validée le — par le propriétaire
+> Statut : **validée** · Rédigée le 2026-11-25 · Validée le 2026-11-26 par le propriétaire
 
 ## Problème
 
@@ -65,14 +65,13 @@ la saisie du contenu et avant d'écrire les pages publiques, qui dépendent tout
       suppression** de données.
 - [ ] docs/05 et `CLAUDE.md` décrivent le nouveau modèle.
 
-## Questions ouvertes
+## Décisions du propriétaire (2026-11-26)
 
-1. **La liste des catégories** (`sommet`, `cotier`, `balade`, `itinerance`) te convient ? Tu en vois
-   une autre (lac, cascade, ville…) ?
-2. **Les grands sentiers en étapes plus tard**, en attendant un itinéraire par tronçon, ça te va ?
-3. **« Ouvert à tout le monde »** : tu veux dire que tout le monde peut **lire et télécharger**
-   librement (c'est déjà le plan), ou que d'autres personnes pourraient **ajouter leurs sorties**,
-   comme sur Komoot ? Le second cas demande des comptes, de la modération et une revue de la
-   responsabilité. Ça revient sur la décision D7 et ce serait un projet à part. Je recommande la
-   lecture libre au lancement.
-4. **Le nom « Sommets »**, on le garde pour l'instant ?
+1. **Catégories** `sommet` · `cotier` · `balade` · `itinerance` : d'accord pour l'instant, à revoir
+   s'il en voit une autre.
+2. **Grands sentiers en étapes** : on attend. D'abord soigner la carte et les informations, la page
+   « tout le sentier » viendra ensuite.
+3. **Ouvert à tous en lecture et en téléchargement**, sans contributions d'autres personnes : il
+   faudrait les gérer, et ce n'est pas prêt. D7 inchangée.
+4. **Le nom « Sommets » reste** : il couvre les vrais sommets et les sommets personnels, ce qu'on
+   accomplit.
