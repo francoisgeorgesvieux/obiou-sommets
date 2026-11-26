@@ -74,7 +74,7 @@ export function directusStore({ services, getSchema, database, env }: HookContex
 
   return {
     async readItinerary(id) {
-      const fields = ['id', 'statut', 'gpx_source', 'masquer_extremites', 'source_altitude_forcee']
+      const fields = ['id', 'statut', 'gpx_source', 'masquer_extremites', 'zone_masquee_m', 'source_altitude_forcee']
       return (await (await items('itineraires')).readOne(id, { fields })) as unknown as Itinerary
     },
     async readGpx(fileId) {

@@ -4860,6 +4860,223 @@ fields:
     foreign_key_table: null
     foreign_key_column: null
 - collection: itineraires
+  field: categorie
+  type: string
+  meta:
+    collection: itineraires
+    conditions: null
+    display: labels
+    display_options:
+      choices:
+      - text: Sommet
+        value: sommet
+      - text: Sentier côtier
+        value: cotier
+      - text: Balade
+        value: balade
+      - text: Itinérance (étape)
+        value: itinerance
+    field: categorie
+    group: null
+    hidden: false
+    interface: select-dropdown
+    note: Le type de sortie, pour les filtres de la carte. Obligatoire pour publier.
+    options:
+      choices:
+      - text: Sommet
+        value: sommet
+      - text: Sentier côtier
+        value: cotier
+      - text: Balade
+        value: balade
+      - text: Itinérance (étape)
+        value: itinerance
+    readonly: false
+    required: false
+    searchable: true
+    sort: 8
+    special: null
+    translations: null
+    validation: null
+    validation_message: null
+    width: half
+  schema:
+    name: categorie
+    table: itineraires
+    data_type: character varying
+    default_value: null
+    max_length: 255
+    numeric_precision: null
+    numeric_scale: null
+    is_nullable: true
+    is_unique: false
+    is_indexed: false
+    is_primary_key: false
+    is_generated: false
+    generation_expression: null
+    has_auto_increment: false
+    foreign_key_table: null
+    foreign_key_column: null
+- collection: itineraires
+  field: region
+  type: integer
+  meta:
+    collection: itineraires
+    conditions: null
+    display: related-values
+    display_options:
+      template: '{{slug}}'
+    field: region
+    group: null
+    hidden: false
+    interface: select-dropdown-m2o
+    note: Le massif. Obligatoire pour publier sans sommet ; vide, celui du premier sommet s'applique.
+    options:
+      template: '{{slug}}'
+      filter:
+        _and:
+        - niveau:
+            _eq: massif
+    readonly: false
+    required: false
+    searchable: true
+    sort: 10
+    special:
+    - m2o
+    translations: null
+    validation: null
+    validation_message: null
+    width: half
+  schema:
+    name: region
+    table: itineraires
+    data_type: integer
+    default_value: null
+    max_length: null
+    numeric_precision: 32
+    numeric_scale: 0
+    is_nullable: true
+    is_unique: false
+    is_indexed: false
+    is_primary_key: false
+    is_generated: false
+    generation_expression: null
+    has_auto_increment: false
+    foreign_key_table: regions
+    foreign_key_column: id
+- collection: itineraires
+  field: pays
+  type: string
+  meta:
+    collection: itineraires
+    conditions: null
+    display: labels
+    display_options:
+      choices:
+      - text: France
+        value: FR
+      - text: Suisse
+        value: CH
+      - text: Italie
+        value: IT
+      - text: Corée du Sud
+        value: KR
+    field: pays
+    group: null
+    hidden: false
+    interface: select-dropdown
+    note: Obligatoire pour publier sans sommet ; vide, celui du premier sommet s'applique.
+    options:
+      choices:
+      - text: France
+        value: FR
+      - text: Suisse
+        value: CH
+      - text: Italie
+        value: IT
+      - text: Corée du Sud
+        value: KR
+    readonly: false
+    required: false
+    searchable: true
+    sort: 11
+    special: null
+    translations: null
+    validation: null
+    validation_message: null
+    width: half
+  schema:
+    name: pays
+    table: itineraires
+    data_type: character varying
+    default_value: null
+    max_length: 255
+    numeric_precision: null
+    numeric_scale: null
+    is_nullable: true
+    is_unique: false
+    is_indexed: false
+    is_primary_key: false
+    is_generated: false
+    generation_expression: null
+    has_auto_increment: false
+    foreign_key_table: null
+    foreign_key_column: null
+- collection: itineraires
+  field: fond_carte
+  type: string
+  meta:
+    collection: itineraires
+    conditions: null
+    display: labels
+    display_options:
+      choices:
+      - text: Automatique (celui du sommet, sinon IGN en France et outdoor ailleurs)
+        value: auto
+      - text: Plan IGN
+        value: ign
+      - text: Outdoor
+        value: outdoor
+    field: fond_carte
+    group: null
+    hidden: false
+    interface: select-dropdown
+    note: null
+    options:
+      choices:
+      - text: Automatique (celui du sommet, sinon IGN en France et outdoor ailleurs)
+        value: auto
+      - text: Plan IGN
+        value: ign
+      - text: Outdoor
+        value: outdoor
+    readonly: false
+    required: false
+    searchable: true
+    sort: 12
+    special: null
+    translations: null
+    validation: null
+    validation_message: null
+    width: half
+  schema:
+    name: fond_carte
+    table: itineraires
+    data_type: character varying
+    default_value: auto
+    max_length: 255
+    numeric_precision: null
+    numeric_scale: null
+    is_nullable: true
+    is_unique: false
+    is_indexed: false
+    is_primary_key: false
+    is_generated: false
+    generation_expression: null
+    has_auto_increment: false
+    foreign_key_table: null
+    foreign_key_column: null
+- collection: itineraires
   field: type
   type: string
   meta:
@@ -4890,7 +5107,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 8
+    sort: 13
     special: null
     translations: null
     validation: null
@@ -4956,7 +5173,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 9
+    sort: 14
     special: null
     translations: null
     validation: null
@@ -4998,7 +5215,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 10
+    sort: 15
     special:
     - m2o
     translations: null
@@ -5053,7 +5270,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 11
+    sort: 16
     special:
     - m2o
     translations: null
@@ -5094,7 +5311,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 12
+    sort: 17
     special:
     - file
     translations: null
@@ -5130,12 +5347,12 @@ fields:
     group: null
     hidden: false
     interface: boolean
-    note: Retire 200 m au début et à la fin (départ depuis un hébergement).
+    note: Retire le début et la fin de la trace publiée (départ de chez soi ou d'un hébergement).
     options: null
     readonly: false
     required: false
     searchable: true
-    sort: 13
+    sort: 18
     special: *id007
     translations: null
     validation: null
@@ -5149,6 +5366,66 @@ fields:
     max_length: null
     numeric_precision: null
     numeric_scale: null
+    is_nullable: true
+    is_unique: false
+    is_indexed: false
+    is_primary_key: false
+    is_generated: false
+    generation_expression: null
+    has_auto_increment: false
+    foreign_key_table: null
+    foreign_key_column: null
+- collection: itineraires
+  field: zone_masquee_m
+  type: integer
+  meta:
+    collection: itineraires
+    conditions:
+    - name: Seulement si les extrémités sont masquées
+      rule:
+        _and:
+        - masquer_extremites:
+            _neq: true
+      hidden: true
+    display: labels
+    display_options:
+      choices:
+      - text: 200 m
+        value: 200
+      - text: 500 m
+        value: 500
+      - text: 1 000 m
+        value: 1000
+    field: zone_masquee_m
+    group: null
+    hidden: false
+    interface: select-dropdown
+    note: Retirée au début et à la fin, le long de la trace. 500 m ou plus pour un départ de chez soi.
+    options:
+      choices:
+      - text: 200 m
+        value: 200
+      - text: 500 m
+        value: 500
+      - text: 1 000 m
+        value: 1000
+    readonly: false
+    required: false
+    searchable: true
+    sort: 19
+    special: null
+    translations: null
+    validation: null
+    validation_message: null
+    width: half
+  schema:
+    name: zone_masquee_m
+    table: itineraires
+    data_type: integer
+    default_value: 500
+    max_length: null
+    numeric_precision: 32
+    numeric_scale: 0
     is_nullable: true
     is_unique: false
     is_indexed: false
@@ -5195,7 +5472,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 14
+    sort: 20
     special: null
     translations: null
     validation: null
@@ -5235,7 +5512,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 15
+    sort: 21
     special: null
     translations: null
     validation: null
@@ -5275,7 +5552,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 16
+    sort: 22
     special: null
     translations: null
     validation: null
@@ -5315,7 +5592,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 17
+    sort: 23
     special: *id007
     translations: null
     validation: null
@@ -5380,7 +5657,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 18
+    sort: 24
     special: *id016
     translations: null
     validation: null
@@ -5424,7 +5701,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 19
+    sort: 25
     special:
     - translations
     translations: null
@@ -5878,7 +6155,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 20
+    sort: 26
     special:
     - o2m
     translations: null
@@ -5904,7 +6181,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 21
+    sort: 27
     special:
     - alias
     - no-data
@@ -5932,7 +6209,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 22
+    sort: 28
     special: &id017
     - geometry.LineString
     translations: null
@@ -5975,7 +6252,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 23
+    sort: 29
     special: *id017
     translations: null
     validation: null
@@ -6016,7 +6293,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 24
+    sort: 30
     special: *id016
     translations: null
     validation: null
@@ -6056,7 +6333,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 25
+    sort: 31
     special: null
     translations: null
     validation: null
@@ -6096,7 +6373,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 26
+    sort: 32
     special: null
     translations: null
     validation: null
@@ -6136,7 +6413,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 27
+    sort: 33
     special: null
     translations: null
     validation: null
@@ -6176,7 +6453,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 28
+    sort: 34
     special: null
     translations: null
     validation: null
@@ -6216,7 +6493,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 29
+    sort: 35
     special: null
     translations: null
     validation: null
@@ -6256,7 +6533,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 30
+    sort: 36
     special: null
     translations: null
     validation: null
@@ -6296,7 +6573,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 31
+    sort: 37
     special: null
     translations: null
     validation: null
@@ -6336,7 +6613,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 32
+    sort: 38
     special: null
     translations: null
     validation: null
@@ -6377,7 +6654,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 33
+    sort: 39
     special: *id016
     translations: null
     validation: null
@@ -6417,7 +6694,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 34
+    sort: 40
     special: null
     translations: null
     validation: null
@@ -8697,13 +8974,13 @@ fields:
     group: null
     hidden: false
     interface: list-m2m
-    note: Plusieurs pour une traversée, dans l'ordre.
+    note: "Facultatif : vide pour une sortie sans sommet (côtier, balade). Plusieurs pour une traversée, dans l'ordre."
     options:
       template: '{{sommets_id.nom}}'
     readonly: false
     required: false
     searchable: true
-    sort: 35
+    sort: 9
     special:
     - m2m
     translations: null
@@ -8915,7 +9192,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 36
+    sort: 41
     special:
     - m2m
     translations: null
@@ -9087,7 +9364,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 37
+    sort: 42
     special:
     - m2m
     translations: null
@@ -9431,7 +9708,7 @@ fields:
     readonly: false
     required: false
     searchable: true
-    sort: 38
+    sort: 43
     special:
     - o2m
     translations: null
@@ -9759,7 +10036,7 @@ fields:
     readonly: true
     required: false
     searchable: true
-    sort: 39
+    sort: 44
     special:
     - o2m
     translations: null
@@ -12159,6 +12436,27 @@ relations:
     foreign_key_table: points_depart
     foreign_key_column: id
     constraint_name: itineraires_point_arrivee_foreign
+    on_update: NO ACTION
+    on_delete: NO ACTION
+- collection: itineraires
+  field: region
+  related_collection: regions
+  meta:
+    junction_field: null
+    many_collection: itineraires
+    many_field: region
+    one_allowed_collections: null
+    one_collection: regions
+    one_collection_field: null
+    one_deselect_action: nullify
+    one_field: null
+    sort_field: null
+  schema:
+    table: itineraires
+    column: region
+    foreign_key_table: regions
+    foreign_key_column: id
+    constraint_name: itineraires_region_foreign
     on_update: NO ACTION
     on_delete: NO ACTION
 - collection: itineraires

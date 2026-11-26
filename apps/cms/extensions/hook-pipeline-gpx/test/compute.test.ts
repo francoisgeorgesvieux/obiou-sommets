@@ -16,7 +16,7 @@ const offline: AltitudeLookup = async () => {
 }
 
 function memoryStore(itinerary: Partial<Itinerary>, text = gpx()) {
-  const route: Itinerary = { id: 7, statut: 'brouillon', gpx_source: 'f-1', masquer_extremites: false, source_altitude_forcee: null, ...itinerary }
+  const route: Itinerary = { id: 7, statut: 'brouillon', gpx_source: 'f-1', masquer_extremites: false, zone_masquee_m: 500, source_altitude_forcee: null, ...itinerary }
   const updates: Record<string, unknown>[] = []
   const exports = new Map<string, ExportFile>()
   const store: Store = {
@@ -68,9 +68,15 @@ describe('computeItinerary', () => {
 
   it('masks the ends when asked, and passes the forced altitude source on', async () => {
     const ign = vi.fn<AltitudeLookup>(async (points) => points.map(() => 1500))
-    const { store, updates } = memoryStore({ masquer_extremites: true, source_altitude_forcee: 'ign' })
+    const { store, updates } = memoryStore({ masquer_extremites: true, zone_masquee_m: 200, source_altitude_forcee: 'ign' })
     await computeItinerary(store, 7, { ign, copernicus: offline, now: () => NOW })
     expect(updates[0]).toMatchObject({ distance_m: 1812, source_altitude_utilisee: 'ign', altitude_max_m: 1500 })
+  })
+
+  it('masks 500 m at each end when the zone is left empty, as for a start from home', async () => {
+    const { store, updates } = memoryStore({ masquer_extremites: true, zone_masquee_m: null })
+    await compute(store)
+    expect(updates[0]).toMatchObject({ distance_m: 1212 })
   })
 
   it('sends a published route with an anomaly back to review, and leaves a draft as it is', async () => {

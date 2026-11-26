@@ -4,6 +4,9 @@
 > l'[architecture](01-architecture-technique.md#5-modèle-de-données) avec les décisions du 18 sept.
 > (D2, D5, D7, D9) et ce que montrent les maquettes. Une fois validé, **ce document fait foi** pour
 > le détail des champs ; le snapshot Directus (`apps/cms/snapshots/`) en sera la traduction exacte.
+> **Mis à jour le 2026-11-26** par la [fiche 01](fiches/01-sorties-sans-sommet.md) : le sommet devient
+> facultatif, l'itinéraire est l'objet central (catégorie, région, pays, fond de carte, adresse
+> `/itineraires/…`).
 
 ## En bref
 
@@ -13,6 +16,9 @@
 - **Deux langues, obligatoires à la publication** : français (source) et anglais. Les textes
   traduisibles vivent dans des tables `…_translations`, une ligne par langue. Le coréen viendra
   ensuite : une ligne à ajouter, sans toucher au schéma.
+- **L'itinéraire est l'objet central, le sommet un regroupement facultatif** (fiche 01, 2026-11-26) :
+  une sortie sans sommet (sentier côtier, balade vers un site, étape d'un grand sentier) se saisit
+  comme les autres, avec sa `categorie`, et porte alors elle-même sa région et son pays.
 - **Tout ce qui se calcule n'est jamais saisi** : distance, dénivelés, durée, effort viennent du
   GPX ; les kilomètres des étapes et des POI se déduisent de leur position sur la trace. On ne
   stocke pas deux fois la même information.
@@ -28,7 +34,8 @@
 erDiagram
   REGIONS ||--o{ REGIONS : "zone › massifs"
   REGIONS ||--o{ SOMMETS : regroupe
-  SOMMETS }o--o{ ITINERAIRES : "atteint par (ordonné)"
+  REGIONS ||--o{ ITINERAIRES : "situe (sans sommet)"
+  SOMMETS }o--o{ ITINERAIRES : "atteint par (ordonné, facultatif)"
   POINTS_DEPART ||--o{ ITINERAIRES : "départ / arrivée"
   ITINERAIRES ||--o{ ETAPES : "décrit par"
   ITINERAIRES }o--o{ POI : "passe par"
@@ -102,8 +109,10 @@ contenu déjà publié.
 - les libellés des listes (cotation T1–T6, types, catégories) : ils se traduisent dans le code du
   site, pas en base.
 
-**Adresses** : le français est à la racine, l'anglais sous `/en` :
-`/sommets/obiou/voie-normale-par-le-vallon` ↔ `/en/summits/obiou/normal-route-via-the-valley`.
+**Adresses** : le français est à la racine, l'anglais sous `/en`. Une fiche itinéraire a une seule
+adresse, avec ou sans sommet (fiche 01) : `/itineraires/voie-normale-par-le-vallon` ↔
+`/en/routes/normal-route-via-the-valley`. La fiche sommet garde `/sommets/obiou` ↔
+`/en/summits/obiou` et liste ses itinéraires.
 Chaque page déclare ses autres versions (`hreflang`), et le sitemap liste les deux langues.
 
 **Recherche et MCP** : la recherche plein texte utilise le dictionnaire de la langue (français ou
@@ -175,8 +184,12 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 |---|---|---|---|
 | `statut`, `date_publication` | voir conventions | ✓ | |
 | 🌐 `nom` | texte | ✓ | « Voie normale par le vallon » |
-| 🌐 `slug` | texte, unique par langue | ✓ | `/sommets/obiou/voie-normale-par-le-vallon`, `/en/summits/obiou/normal-route-via-the-valley` |
-| `sommets` | ↔ `sommets`, **ordonné** | ✓ | via `itineraires_sommets` ; plusieurs pour une traversée |
+| `categorie` | choix : `sommet` · `cotier` · `balade` · `itinerance` | ✓ | le type de sortie, pour les filtres de la carte ; liste courte, extensible (fiche 01) |
+| 🌐 `slug` | texte, unique par langue | ✓ | `/itineraires/voie-normale-par-le-vallon`, `/en/routes/normal-route-via-the-valley`. Sans le sommet dans l'adresse, deux itinéraires publiés ne peuvent pas partager un slug dans une même langue : le hook de publication le refuse |
+| `sommets` | ↔ `sommets`, **ordonné** | | via `itineraires_sommets` ; **facultatif** (vide pour une sortie sans sommet), plusieurs pour une traversée |
+| `region` | → `regions` (massif) | sans sommet ✓ | vide : celle du premier sommet. Renseignée, elle l'emporte |
+| `pays` | choix : `FR` · `CH` · `IT` · `KR` | sans sommet ✓ | même règle que `region` |
+| `fond_carte` | choix : `auto` · `ign` · `outdoor` | | `auto` par défaut : celui du premier sommet, sinon IGN en France et outdoor ailleurs (D9) |
 | `type` | choix : `aller_retour` · `boucle` · `traversee` | ✓ | |
 | `cotation` | choix : `T1` … `T6` | ✓ | **échelle SAC (D2)**, voir plus bas |
 | `point_depart` | → `points_depart` | ✓ | |
@@ -190,7 +203,8 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | `duree_estimee_min` | entier | | **ta correction** de la durée ; vide = le calcul s'affiche |
 | `verifie_le` | date | | vérification sans sortie complète (un passage partiel, un échange avec la mairie…) |
 | 🔒 `gpx_source` | fichier (dossier privé) | ✓ | le GPX déposé, jamais servi tel quel |
-| 🔒 `masquer_extremites` | booléen | | retire 200 m au début et à la fin (hébergement) |
+| 🔒 `masquer_extremites` | booléen | | retire le début et la fin de la trace publiée (départ de chez soi ou d'un hébergement) |
+| 🔒 `zone_masquee_m` | choix : `200` · `500` · `1000` | | distance retirée à chaque bout, le long de la trace ; **500 m par défaut**, assez pour un départ de chez soi ; affiché seulement si `masquer_extremites` |
 | 🔒 `source_altitude_forcee` | choix : vide · `barometre` · `ign` · `copernicus` · `gps` | | vide = choix automatique |
 | ⚙️ `trace` | LineString | | trace nettoyée, pleine résolution |
 | ⚙️ `trace_simplifiee` | LineString | | pour la carte (Douglas-Peucker) |
@@ -203,6 +217,19 @@ Deux niveaux, comme dans les maquettes (« Alpes › Dévoluy », « Corée du S
 | ⚙️ `source_altitude_utilisee` | choix | | celle que le pipeline a retenue |
 | ⚙️ 🔒 `anomalies` | JSON | | sauts GPS, emprise incohérente… ; en présence d'anomalie, le statut repasse en relecture |
 | ⚙️ 🔒 `calcule_le` | date et heure | | |
+
+**Catégories** (fiche 01), libellés de l'admin et des filtres :
+
+| Valeur | Libellé | Exemple |
+|---|---|---|
+| `sommet` | Sommet | Obiou, Hallasan |
+| `cotier` | Sentier côtier | Calanques |
+| `balade` | Balade | vers un site naturel (Pierre percée) |
+| `itinerance` | Itinérance (étape) | un tronçon d'un grand sentier, numéro dans le nom : « Jeju Olle 15 : Hallim → Gonae » |
+
+Les grands sentiers en étapes (une page par sentier, étapes dans l'ordre) viendront plus tard, avec
+une collection `sentiers` (décision du 2026-11-26). La cotation SAC sert pour toutes les catégories :
+un sentier côtier est en T1 ou T2.
 
 **Cotation SAC (D2)**, libellés de l'admin et de la fiche :
 
@@ -366,15 +393,17 @@ Le site ne passe pas par Directus. Il a **deux rôles Postgres**, les plus étro
 
 ## Ce qui est public : les vues SQL
 
-Filtrées sur `statut = 'publie'`. Un itinéraire n'apparaît que si au moins un de ses sommets est
-publié. Chaque vue porte une colonne **`langue`** : une ligne par contenu et par langue publiée. Le
+Filtrées sur `statut = 'publie'`. Un itinéraire publié apparaît **avec ou sans sommet** (fiche 01) ;
+quand il en a, seuls ses sommets publiés sont listés. Sa région, son pays et son fond de carte se
+résolvent dans la vue : ceux de l'itinéraire s'ils sont renseignés, sinon ceux de son premier
+sommet (`sort` de `itineraires_sommets`), puis `auto` → `ign` en France, `outdoor` ailleurs. Chaque vue porte une colonne **`langue`** : une ligne par contenu et par langue publiée. Le
 site et le MCP public filtrent sur la langue demandée.
 
 | Vue | Contenu |
 |---|---|
-| `public_regions` | zones et massifs, avec leur nombre de sommets publiés |
+| `public_regions` | zones et massifs, avec leur nombre de sommets et d'itinéraires publiés |
 | `public_sommets` | fiche sommet, fond de carte résolu (`auto` → `ign` ou `outdoor`), nombre d'itinéraires |
-| `public_itineraires` | fiche itinéraire et statistiques ; `duree_min` = ta correction, sinon le calcul ; date de dernière vérification ; accès en transport en commun (oui/non) |
+| `public_itineraires` | fiche itinéraire et statistiques ; `categorie` ; `region`, `pays` et `fond_carte` résolus ; `duree_min` = ta correction, sinon le calcul ; date de dernière vérification ; accès en transport en commun (oui/non) |
 | `public_itineraires_sommets` | ordre des sommets d'une traversée |
 | `public_etapes` | étapes avec km et altitudes, déduits de `position_fin` |
 | `public_itineraires_poi` | POI avec leur km sur la trace |
@@ -385,7 +414,7 @@ site et le MCP public filtrent sur la langue demandée.
 | `public_pages`, `public_parametres` | pages publiées, bandeau |
 
 **Jamais dans une vue** : `gpx_source`, `gpx_brut`, `anomalies`, `calcule_le`, les options du
-pipeline, les champs `user_*`, les signalements et les compteurs bruts.
+pipeline (`masquer_extremites`, `zone_masquee_m`, `source_altitude_forcee`), les champs `user_*`, les signalements et les compteurs bruts.
 
 Un **test de contrat** (phase 2) vérifie que ces vues compilent contre le snapshot Directus. Il
 casse donc dès qu'une modification de schéma les rendrait invalides.
@@ -394,7 +423,8 @@ casse donc dès qu'une modification de schéma les rendrait invalides.
 
 - **GPX** : le brut garde horodatages, cardio et modèle de montre, dans le dossier privé. Tout ce qui
   est publié (trace, profil, exports) en est dépourvu. Option `masquer_extremites` pour un départ
-  depuis un hébergement.
+  de chez soi ou d'un hébergement : 500 m retirés à chaque bout par défaut (`zone_masquee_m`). Le
+  `point_depart` affiché est un lieu public (parking, place du village), jamais la maison.
 - **Photos** : un original de téléphone contient souvent la **position GPS dans ses EXIF**. Ne
   servir au public que des versions transformées, qui les retirent. À vérifier en phase 3, image
   réelle à l'appui.
@@ -416,6 +446,9 @@ publique du 17 août 2025, départ 6 h 10.
 (automatique). `reservation_requise` sur le sommet. Deux itinéraires, Seongpanak et Gwaneumsa, avec
 leurs règles propres dans `reglementation` (heures limites de passage).
 
+**Jeju Olle 15 : Hallim → Gonae** (sans sommet) : `categorie` `itinerance`, traversée, T1,
+`region` massif Jeju, `pays` KR, fond outdoor (automatique). Adresse `/itineraires/jeju-olle-15`.
+
 ## Décisions du 18 septembre
 
 1. **Sorties publiques** : oui, avec une case `publique` par sortie pour en garder pour toi.
@@ -431,6 +464,13 @@ leurs règles propres dans `reglementation` (heures limites de passage).
   obligatoires pour publier** (voir « Langues obligatoires »).
 - **L3.** Noms propres non traduits ; noms d'itinéraires et de points de départ traduits.
 - **L4.** Adresses anglaises sous `/en`, slugs de sommets communs, slugs d'itinéraires traduits.
+
+## Décisions du 26 novembre (fiche 01)
+
+1. **Catégories** `sommet` · `cotier` · `balade` · `itinerance`, à revoir si une autre apparaît.
+2. **Grands sentiers en étapes** : plus tard ; chaque tronçon est un itinéraire `itinerance`.
+3. **Lecture et téléchargement ouverts à tous**, sans contributions d'autres personnes.
+4. **Le nom « Sommets » reste** : les vrais sommets, et les sommets personnels.
 
 ## Ce qui vient ensuite
 
