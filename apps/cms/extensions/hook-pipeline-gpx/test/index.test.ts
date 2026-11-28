@@ -85,7 +85,7 @@ function fakeDirectus(files: Record<string, { text: string; filesize?: number | 
   return { db, calls, context, logger }
 }
 
-const route = (data: Row = {}) => ({ id: 7, statut: 'brouillon', gpx_source: 'f-1', masquer_extremites: false, source_altitude_forcee: null, ...data })
+const route = (data: Row = {}) => ({ id: 7, statut: 'brouillon', gpx_source: 'f-1', masquer_extremites: false, zone_masquee_m: 500, source_altitude_forcee: null, ...data })
 
 describe('directusStore', () => {
   it('reads the route with the pipeline fields and the GPX as text', async () => {
@@ -93,7 +93,7 @@ describe('directusStore', () => {
     db.itineraires?.push(route())
     const store = directusStore(context)
     expect(await store.readItinerary(7)).toMatchObject({ id: 7, gpx_source: 'f-1' })
-    expect(calls[0]?.args[1]).toEqual({ fields: ['id', 'statut', 'gpx_source', 'masquer_extremites', 'source_altitude_forcee'] })
+    expect(calls[0]?.args[1]).toEqual({ fields: ['id', 'statut', 'gpx_source', 'masquer_extremites', 'zone_masquee_m', 'source_altitude_forcee'] })
     expect(await store.readGpx('f-1')).toBe(GPX)
   })
 

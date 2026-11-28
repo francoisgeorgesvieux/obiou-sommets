@@ -1,6 +1,6 @@
 # obiou-sommets — contexte projet pour Claude
 
-> Document de passation vivant. Dernière mise à jour : **2026-10-29**.
+> Document de passation vivant. Dernière mise à jour : **2026-11-26**.
 
 ## Ce que c'est
 
@@ -53,6 +53,18 @@ Concrètement :
 **Priorités : [ROADMAP.md](ROADMAP.md)** (liste ordonnée par le propriétaire, depuis le 2026-11-25).
 Aucune feature ne se code sans sa fiche validée dans `docs/fiches/` (modèle `docs/fiches/_modele.md`).
 
+- **Feature 1, sorties sans sommet (2026-11-26)** : l'itinéraire est l'objet central, le sommet
+  facultatif. Nouveaux champs sur `itineraires` : `categorie` (`sommet` · `cotier` · `balade` ·
+  `itinerance`), `region` et `pays` (obligatoires pour publier **sans sommet**, sinon repris du
+  premier sommet), `fond_carte` (`auto`), `zone_masquee_m` (200, 500 ou 1 000 m, **500 par défaut**,
+  pour un départ de chez soi). Adresse unique `/itineraires/[slug]` (`/en/routes/[slug]`), donc
+  slug unique par langue entre itinéraires publiés, vérifié par `hook-publication`. Grands
+  sentiers en étapes : plus tard. Les vues `db/views` (feature 2) suivent docs/05, à jour.
+  **Test local sur Mac** : Docker Desktop ne partage pas `/private/tmp` (le scratchpad) ; passer
+  les fichiers par `docker cp`. Snapshot réduit à 25 collections au plus (licence Core) : filtrer
+  le YAML et l'appliquer en JSON (`schema apply` accepte les deux). L'ancien schéma appliqué, le
+  `--dry-run` du nouveau a prévu 0 suppression ; dix scénarios par l'API verts (Directus 12.3).
+
 **Démarrer la phase 2 (CMS et pipeline GPX)**, voir la roadmap
 - **Modèle de données validé le 2026-09-18**, langues comprises :
   [docs/05-modele-de-donnees.md](docs/05-modele-de-donnees.md), qui fait foi.
@@ -102,8 +114,8 @@ Aucune feature ne se code sans sa fiche validée dans `docs/fiches/` (modèle `d
   IGN écrits de mémoire, à vérifier dès que le propriétaire aura ouvert ces domaines (demandé le
   2026-10-30), puis mesurer le D+ du modèle de terrain contre celui de Strava sur les six traces.
 - **Hook Directus `hook-pipeline-gpx`** (2026-10-30, `apps/cms/extensions/hook-pipeline-gpx`) : à la
-  création ou à l'enregistrement d'un itinéraire qui touche `gpx_source`, `masquer_extremites` ou
-  `source_altitude_forcee`, lance `processTrace` **en arrière-plan** (l'enregistrement n'attend pas),
+  création ou à l'enregistrement d'un itinéraire qui touche `gpx_source`, `masquer_extremites`,
+  `zone_masquee_m` ou `source_altitude_forcee`, lance `processTrace` **en arrière-plan** (l'enregistrement n'attend pas),
   écrit les champs calculés et `calcule_le`, remplace les trois exports (GPX, KML, GeoJSON simplifiés à
   2 m, dossier `exports` créé au besoin, ancien fichier supprimé) ; GPX illisible → anomalie
   `gpx_invalide`, champs précédents gardés ; GPX retiré → champs et exports effacés ; une anomalie sur
@@ -120,7 +132,11 @@ Aucune feature ne se code sans sa fiche validée dans `docs/fiches/` (modèle `d
   itinéraire, un conseil ou une page tant qu'une langue obligatoire manque, est en `brouillon` ou a
   un champ requis vide (`REQUIRED_FIELDS` dans `src/rules.ts`, d'après docs/05) ; garde aussi les
   traductions d'un contenu déjà publié (vider ou supprimer l'anglais est refusé) ; pose
-  `date_publication` à la première publication. Langues obligatoires : celles où `obligatoire` est
+  `date_publication` à la première publication. Depuis la fiche 01 (2026-11-26), un itinéraire
+  demande aussi sa `categorie`, et sans sommet sa `region` et son `pays` ; son slug ne doit pas
+  être celui d'un autre itinéraire **publié** dans la même langue. Ces règles valent aussi pour une
+  modification d'un itinéraire déjà publié (retirer son dernier sommet, vider sa catégorie).
+  Langues obligatoires : celles où `obligatoire` est
   vrai, sinon `fr` et `en`. **Essayé le 2026-10-30 sur un Directus 12.3.1 local** (schéma réduit à
   `languages`, `itineraires`, `itineraires_translations`, `exports`), dix cas par l'API, dont la forme
   `{create, update, delete}` que l'admin envoie avec `languages_code: { code }`. **Limite connue** :

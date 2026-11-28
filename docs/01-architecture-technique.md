@@ -267,8 +267,8 @@ Points d'attention :
 |---|---|---|
 | `/` | SSR + carte client | Carte exploratoire, recherche, filtres, `?sommet=obiou` ouvre le panneau |
 | `/sommets` | SSR | Liste filtrable (altitude, massif, difficulté, durée, D+) |
-| `/sommets/[slug]` | SSR + cache | Fiche sommet complète |
-| `/sommets/[slug]/[itineraire]` | SSR + cache | Fiche itinéraire, profil, infos pratiques, téléchargement |
+| `/sommets/[slug]` | SSR + cache | Fiche sommet complète, avec la liste de ses itinéraires |
+| `/itineraires/[slug]` | SSR + cache | Fiche itinéraire, avec ou sans sommet (fiche 01) : profil, infos pratiques, téléchargement |
 | `/massifs/[slug]` | SSR + cache | Sommets d'un massif |
 | `/favoris` | Client | « Mes sommets » (stockage local, sans compte) |
 | `/guides/*` | SSR | Importer un GPX, cotations, sécurité, préparer sa sortie |

@@ -4584,8 +4584,8 @@ async function processTrace(parsed, options) {
 
 // src/compute.ts
 import { createHash } from "node:crypto";
-var TRIGGER_FIELDS = ["gpx_source", "masquer_extremites", "source_altitude_forcee"];
-var MASK_M = 200;
+var TRIGGER_FIELDS = ["gpx_source", "masquer_extremites", "zone_masquee_m", "source_altitude_forcee"];
+var MASK_M = 500;
 var EXPORT_TOLERANCE_M = 2;
 var COMPUTED_FIELDS = [
   "trace",
@@ -4649,7 +4649,7 @@ async function computeItinerary(store, id, options = {}) {
   let result;
   try {
     result = await processTrace(parseGpx(await store.readGpx(itinerary.gpx_source)), {
-      trimM: itinerary.masquer_extremites ? MASK_M : 0,
+      trimM: itinerary.masquer_extremites ? itinerary.zone_masquee_m ?? MASK_M : 0,
       forcedSource: itinerary.source_altitude_forcee,
       ign,
       copernicus
@@ -4697,7 +4697,7 @@ function directusStore({ services, getSchema, database, env }) {
   });
   return {
     async readItinerary(id) {
-      const fields2 = ["id", "statut", "gpx_source", "masquer_extremites", "source_altitude_forcee"];
+      const fields2 = ["id", "statut", "gpx_source", "masquer_extremites", "zone_masquee_m", "source_altitude_forcee"];
       return await (await items("itineraires")).readOne(id, { fields: fields2 });
     },
     async readGpx(fileId) {

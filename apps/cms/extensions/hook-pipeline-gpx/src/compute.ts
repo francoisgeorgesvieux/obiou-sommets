@@ -21,6 +21,8 @@ export interface Itinerary {
   statut: string
   gpx_source: string | null
   masquer_extremites: boolean | null
+  /** Metres removed at each end when `masquer_extremites` is set; empty means `MASK_M`. */
+  zone_masquee_m: number | null
   source_altitude_forcee: AltitudeSource | null
 }
 
@@ -50,10 +52,13 @@ export interface ComputeOptions {
 }
 
 /** Changing one of these fields reruns the pipeline. */
-export const TRIGGER_FIELDS = ['gpx_source', 'masquer_extremites', 'source_altitude_forcee'] as const
+export const TRIGGER_FIELDS = ['gpx_source', 'masquer_extremites', 'zone_masquee_m', 'source_altitude_forcee'] as const
 
-/** The privacy zone of `masquer_extremites` (docs/05). */
-export const MASK_M = 200
+/**
+ * The privacy zone of `masquer_extremites` when `zone_masquee_m` is empty (docs/05): 500 m, the
+ * schema default, enough for a start from home (fiche 01); 200 m is offered for a lodging.
+ */
+export const MASK_M = 500
 /** Downloads keep more detail than the map trace: at 2 m, 1 to 3 % of the distance is lost. */
 export const EXPORT_TOLERANCE_M = 2
 
@@ -134,7 +139,7 @@ export async function computeItinerary(store: Store, id: number, options: Comput
   let result: PipelineResult
   try {
     result = await processTrace(parseGpx(await store.readGpx(itinerary.gpx_source)), {
-      trimM: itinerary.masquer_extremites ? MASK_M : 0,
+      trimM: itinerary.masquer_extremites ? (itinerary.zone_masquee_m ?? MASK_M) : 0,
       forcedSource: itinerary.source_altitude_forcee,
       ign,
       copernicus,

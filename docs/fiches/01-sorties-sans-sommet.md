@@ -34,7 +34,10 @@ la saisie du contenu et avant d'écrire les pages publiques, qui dépendent tout
   fiche sommet liste les siens. On ne fait plus d'adresse imbriquée `/sommets/x/y`, qui n'a pas de
   sens sans sommet.
 - Mise à jour de docs/05, du schéma Directus et des vues prévues. Le hook de publication n'exige
-  déjà aucun sommet.
+  déjà aucun sommet ; il exige désormais la catégorie, la région et le pays sans sommet, et un slug
+  libre dans la langue (adresse sans sommet).
+- Ajouté en cours de route (sorties pilotes qui partent près de la maison) : `zone_masquee_m`,
+  200, 500 ou 1 000 m masqués à chaque bout, 500 par défaut au lieu de 200 fixes.
 
 **On ne fait pas (cette fois) :**
 - **Les grands sentiers en étapes** (Haeparang-gil : 50 tronçons, Jeju Olle : 27) comme objet à
@@ -58,12 +61,14 @@ la saisie du contenu et avant d'écrire les pages publiques, qui dépendent tout
 
 ## Comment on saura que c'est fini
 
-- [ ] Dans un Directus local, on enregistre et publie un itinéraire sans sommet en FR et EN, et le
-      pipeline GPX calcule ses champs.
-- [ ] Un itinéraire avec sommet garde exactement le comportement actuel.
-- [ ] `schema apply --dry-run` sur la base de production (copie locale) ne prévoit **aucune
-      suppression** de données.
-- [ ] docs/05 et `CLAUDE.md` décrivent le nouveau modèle.
+- [x] Dans un Directus local, on enregistre et publie un itinéraire sans sommet en FR et EN, et le
+      pipeline GPX calcule ses champs (2026-11-26, Directus 12.3.1, par l'API).
+- [x] Un itinéraire avec sommet garde exactement le comportement actuel, plus la catégorie exigée
+      à la publication.
+- [x] `schema apply --dry-run` sur la base de production (copie locale) ne prévoit **aucune
+      suppression** de données (base locale au schéma de `main`, celui de la production : 5 champs
+      et 1 relation créés, des notes et l'ordre du formulaire mis à jour, rien de supprimé).
+- [x] docs/05 et `CLAUDE.md` décrivent le nouveau modèle.
 
 ## Décisions du propriétaire (2026-11-26)
 

@@ -11,6 +11,21 @@ export const REQUIRED_FIELDS: Record<string, readonly string[]> = {
   pages: ['titre', 'slug', 'contenu'],
 }
 
+/**
+ * Fields of the item itself required to publish (fiche 01). A route needs no summit, but without
+ * one it carries its own region and country, which a summit would otherwise give it.
+ */
+export interface ItemRule {
+  always: readonly string[]
+  withoutSummit: readonly string[]
+}
+export const REQUIRED_ITEM_FIELDS: Record<string, ItemRule> = {
+  itineraires: { always: ['categorie'], withoutSummit: ['region', 'pays'] },
+}
+
+/** Collections whose translated `slug` makes the address, so must be unique per language (fiche 01). */
+export const UNIQUE_SLUG = ['itineraires'] as const
+
 /** Used while no language has `obligatoire` set (docs/05: French and English). */
 export const DEFAULT_MANDATORY = ['fr', 'en'] as const
 
@@ -28,6 +43,8 @@ export interface Problem {
   fields: string[]
   missing?: true
   draft?: true
+  /** The slug, already used in this language by another item. */
+  taken?: string
 }
 
 /**
@@ -42,8 +59,8 @@ export function mandatoryLanguages(languages: readonly Language[]): string[] {
 const isObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value)
 
 /**
- * The translations an item will have once `change` (the `traductions` value of a Directus payload)
- * is saved. Directus accepts two shapes: `{ create, update, delete }`, as the admin sends it, and a
+ * The related rows an item will have once `change` (the value of a one-to-many or many-to-many
+ * field in a Directus payload, such as `traductions` or `sommets`) is saved. Directus accepts two shapes: `{ create, update, delete }`, as the admin sends it, and a
  * plain array that replaces the list (an id alone keeps a row, an object with an id updates it).
  */
 export function mergeTranslations(current: readonly Translation[], change: unknown): Translation[] {
@@ -62,8 +79,14 @@ export function mergeTranslations(current: readonly Translation[], change: unkno
 const blank = (value: unknown) =>
   value === null || value === undefined || (typeof value === 'string' && !value.trim()) || (Array.isArray(value) && !value.length)
 
+/** Blank item fields that stop publication; `summits` is the number of summits once saved. */
+export function itemProblems(item: Record<string, unknown>, rule: ItemRule | undefined, summits: number): string[] {
+  if (!rule) return []
+  return [...rule.always, ...(summits ? [] : rule.withoutSummit)].filter((field) => blank(item[field]))
+}
+
 /** The language of a translation; the admin may send the related language as an object. */
-const languageOf = (translation: Translation) => {
+export const languageOf = (translation: Translation) => {
   const code = translation.languages_code
   return isObject(code) ? code.code : code
 }
@@ -80,13 +103,23 @@ export function publicationProblems(translations: readonly Translation[], mandat
   })
 }
 
-/** The message shown in the admin, naming each language and what it lacks. */
-export function problemMessage(problems: readonly Problem[], languages: readonly Language[]): string {
+/**
+ * The message shown in the admin, naming the item fields, then each language and what it lacks.
+ * `itemFields` come from `itemProblems`; `withoutSummit` explains why region and country are asked.
+ */
+export function problemMessage(
+  problems: readonly Problem[],
+  languages: readonly Language[],
+  itemFields: readonly string[] = [],
+  withoutSummit = false,
+): string {
   const name = (code: string) => languages.find((l) => l.code === code)?.name ?? code
   const parts = problems.map((p) => {
     if (p.missing) return `${name(p.language)} : traduction absente`
     if (p.draft) return `${name(p.language)} : traduction encore en brouillon`
+    if (p.taken) return `${name(p.language)} : l'adresse « ${p.taken} » est déjà prise par un autre itinéraire`
     return `${name(p.language)} : ${p.fields.join(', ')} à remplir`
   })
+  if (itemFields.length) parts.unshift(`${itemFields.join(', ')} à remplir${withoutSummit ? ' (sortie sans sommet)' : ''}`)
   return `Publication impossible. ${parts.join(' ; ')}.`
 }
